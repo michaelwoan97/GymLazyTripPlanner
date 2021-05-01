@@ -1,5 +1,6 @@
 package com.gymlazy.tripplanner;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,8 +34,11 @@ public class DatePickerFragment extends DialogFragment {
     private static final String ARG_DATE = "ARG_DATE";
     private static final String TAG = "DatePickerFragment";
     public static final String PICK_START_DATE = "PickStartDate";
+    public static final String PICK_END_DATE = "PickEndDate";
     public static final int PICK_START_DATE_REQUEST = 1;
+    public static final int PICK_END_DATE_REQUEST = 2;
     public static final int RESULT_PICK_START_DATE = 10;
+    public static final int RESULT_PICK_END_DATE = 11;
 
     private DatePicker mDatePicker;
     @NonNull
@@ -77,8 +82,16 @@ public class DatePickerFragment extends DialogFragment {
                         Date dDate = c.getTime();
                         String sChosenDate = df.format(dDate);
                         Log.i(TAG,"Date picked: " + sChosenDate);
-                        sendResult(RESULT_PICK_START_DATE,sChosenDate);
 
+                        // check whether it is picking the start date or end date
+                        if(DatePickerFragment.this.getTargetRequestCode() == PICK_START_DATE_REQUEST)
+                        {
+                            sendResult(Activity.RESULT_OK,sChosenDate);
+                        }
+                        else if(DatePickerFragment.this.getTargetRequestCode() == PICK_END_DATE_REQUEST)
+                        {
+                            sendResult(Activity.RESULT_OK,sChosenDate);
+                        }
 
                     }
                 })
@@ -104,10 +117,21 @@ public class DatePickerFragment extends DialogFragment {
 
         // create intent with the chosen date
         Intent i = new Intent();
-        i.putExtra(PICK_START_DATE,sDate);
+
+        // check whether it is picking the start date or end date
+        if(DatePickerFragment.this.getTargetRequestCode() == PICK_START_DATE_REQUEST)
+        {
+            i.putExtra(PICK_START_DATE,sDate);
+
+        }
+        else if(DatePickerFragment.this.getTargetRequestCode() == PICK_END_DATE_REQUEST)
+        {
+            i.putExtra(PICK_END_DATE,sDate);
+        }
 
         // send back date to the target fragment
         getTargetFragment().onActivityResult(getTargetRequestCode(),resultCode,i);
+
     }
 
 

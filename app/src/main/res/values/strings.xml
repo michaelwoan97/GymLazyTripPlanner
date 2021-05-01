@@ -11,4 +11,6 @@
     <string name="language_label">What language do you speak?</string>
     <string name="covid_label">Do you have Covid-19?</string>
     <string name="search_label">Search</string>
+
+    <string name="invalid_date_label">Sorry, your chosen date is invalid!</string>
 </resources>
