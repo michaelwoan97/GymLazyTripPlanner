@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:clickable="true">
 
     <TextView
         android:id="@+id/textView"
@@ -28,6 +30,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <EditText
+
         android:id="@+id/trip_destination"
         android:layout_width="0dp"
         android:layout_height="40dp"
@@ -100,7 +103,7 @@
 
     <EditText
         android:id="@+id/num_adult"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
@@ -112,7 +115,7 @@
 
     <EditText
         android:id="@+id/num_child"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
@@ -144,7 +147,7 @@
 
     <Spinner
         android:id="@+id/language"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
