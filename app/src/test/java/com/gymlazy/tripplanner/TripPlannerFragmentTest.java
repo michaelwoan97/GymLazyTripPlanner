@@ -17,9 +17,11 @@ public class TripPlannerFragmentTest {
     private DatePickerFragment mDatePickerFragment;
     private TripPlannerFragment mSubject;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E MMM d yyyy", Locale.getDefault());
+
     //Code written inside a method marked @Before will be run once before each test executes
     @Before
     public void setUp() throws Exception {
+        mSubject = new TripPlannerFragment();
     }
 
     @Test
@@ -54,4 +56,5 @@ public class TripPlannerFragmentTest {
         String sString ="";
         assertThat(mSubject.checkRequiredField(sString),is(false));
     }
+
 }

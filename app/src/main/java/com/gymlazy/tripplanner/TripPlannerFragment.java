@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
@@ -45,6 +46,8 @@ public class TripPlannerFragment extends Fragment {
     private EditText mNumChild;
     private EditText mDestination;
     private Spinner mLanguages;
+    private RadioGroup mHasCovid;
+    private Button mSearchBtn;
     private Date mDate;
     private Date mStartDate;
     private Date mEndDate;
@@ -150,6 +153,19 @@ public class TripPlannerFragment extends Fragment {
         mLanguageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mLanguages.setAdapter(mLanguageAdapter);
 
+        mHasCovid = v.findViewById(R.id.covid);
+        mSearchBtn = v.findViewById(R.id.search_btn);
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(validateInputs() != true)
+                {
+                    return;
+                }
+                Toast.makeText(TripPlannerFragment.this.getActivity(), "You are at hotel screen!", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
 
         return v;
     }
@@ -277,7 +293,7 @@ public class TripPlannerFragment extends Fragment {
     {
         boolean bRetVal = false;
 
-        if(iNumPeople <= MAX_TRIPPER)
+        if(iNumPeople <= MAX_TRIPPER && iNumPeople != 0)
         {
             bRetVal = true;
         }
@@ -313,6 +329,102 @@ public class TripPlannerFragment extends Fragment {
         InputMethodManager inputMethodManager =(InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    public RadioGroup getHasCovid() {
+        return mHasCovid;
+    }
+
+    public void setHasCovid(RadioGroup hasCovid) {
+        mHasCovid = hasCovid;
+    }
+
+    /*
+     *	Function: hideKeyboard(View view)
+     *	Description:
+     *       The purpose of this function is to check whether all the required input field is filled
+     *	Parameter: not receive anything
+     *	Return: boolean: return true if all the inputs are valid
+     */
+    private boolean validateInputs()
+    {
+        int iSumPeopleTrip = 0;
+        int iHasCovid = mHasCovid.getCheckedRadioButtonId();
+
+        // check whether they have covid-19 symptom
+        if(iHasCovid == -1)
+        {
+            Toast.makeText(this.getActivity(), R.string.invalid_covid_label, Toast.LENGTH_SHORT)
+                    .show();
+            return false;
+        }
+        else if (iHasCovid == R.id.covid_yes)
+        {
+            Toast.makeText(this.getActivity(), R.string.covid_yes_label, Toast.LENGTH_SHORT)
+                    .show();
+            return false;
+        }
+        else
+        {
+            // check whether the destination is empty
+            if(checkRequiredField(mDestination.getText().toString()) == false)
+            {
+                mDestination.setError("Sorry, Please enter your destination!");
+                return false;
+            }
+            else if( mNumAdult.getText().toString().isEmpty())
+            {
+                mNumAdult.setError("Sorry, at least 1 adult on the trip");
+                return false;
+            }
+            else
+            {
+                try {
+                    Integer.parseInt(mNumAdult.getText().toString());
+                } catch(Exception e) {
+                    mNumAdult.setError("Sorry, please enter integer number");
+                    return false;
+                }
+
+                if(!mNumChild.getText().toString().isEmpty())
+                {
+                    try {
+                        Integer.parseInt(mNumChild.getText().toString());
+                    } catch(Exception e) {
+                        mNumChild.setError("Sorry, please enter integer number");
+                        return false;
+                    }
+
+                    iSumPeopleTrip = Integer.valueOf(mNumAdult.getText().toString()) + Integer.valueOf(mNumChild.getText().toString());
+                }
+                else
+                {
+                    iSumPeopleTrip = Integer.valueOf(mNumAdult.getText().toString());
+                }
+
+                // check whether the number people on the trip is not zero
+                if(iSumPeopleTrip > MAX_TRIPPER)
+                {
+                    Toast.makeText(this.getActivity(), "Sorry, maximum people on the trip is 1000!", Toast.LENGTH_SHORT)
+                    .show();
+                    return false;
+                }
+                else if(checkNumberTripper(iSumPeopleTrip) == false)
+                {
+                    mNumAdult.setError("Sorry, at least 1 adult on the trip");
+                    return false;
+                }
+
+
+            }
+
+        }
+
+        return true;
+
+    }
+
+
+
 
 
 

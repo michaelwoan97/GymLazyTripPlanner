@@ -13,4 +13,7 @@
     <string name="search_label">Search</string>
 
     <string name="invalid_date_label">Sorry, your chosen date is invalid!</string>
+    <string name="invalid_covid_label">Sorry, please indicate whether you have Covid-19 or not</string>
+    <string name="covid_yes_label">Sorry, please stay at home!</string>
+    <string name="destination_emptyError_label">Sorry, Please enter your destination!</string>
 </resources>
