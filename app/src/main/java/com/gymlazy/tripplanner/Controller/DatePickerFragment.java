@@ -1,8 +1,7 @@
-package com.gymlazy.tripplanner;
+package com.gymlazy.tripplanner.Controller;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,10 +13,9 @@ import android.widget.DatePicker;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
-import java.text.DateFormat;
-import java.text.ParseException;
+import com.gymlazy.tripplanner.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".Controller.HotelListActivity"></activity>
+        <activity android:name=".Controller.HotelPagerActivity"
+            android:parentActivityName=".Controller.HotelListActivity"></activity>
     </application>
 
 </manifest>

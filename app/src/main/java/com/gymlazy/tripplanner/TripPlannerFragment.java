@@ -1,43 +1,36 @@
 package com.gymlazy.tripplanner;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import java.sql.Array;
-import java.text.DateFormat;
+import com.gymlazy.tripplanner.Controller.DatePickerFragment;
+import com.gymlazy.tripplanner.Controller.HotelListActivity;
+import com.gymlazy.tripplanner.Model.Hotel;
+import com.gymlazy.tripplanner.Model.HotelList;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-
-import static androidx.core.content.ContextCompat.getSystemService;
 
 public class TripPlannerFragment extends Fragment {
     private Button mStartDateBtn;
@@ -51,6 +44,7 @@ public class TripPlannerFragment extends Fragment {
     private Date mDate;
     private Date mStartDate;
     private Date mEndDate;
+    private SimpleDateFormat mSimpleDateFormat;
     private ArrayList<String> mStringArrayListLanguages;
     private static final String TAG = "TripPlannerFragment";
     private static final String DATE_PICKER_TAG = "DateTripPicker";
@@ -66,17 +60,44 @@ public class TripPlannerFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSimpleDateFormat = new SimpleDateFormat("E MMM d yyyy", Locale.getDefault());
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = getLayoutInflater().inflate(R.layout.trip_planner_fragment,container,false);
-        mDate = Calendar.getInstance().getTime();
-        mStartDate = mEndDate = mDate;
 
         mStartDateBtn = v.findViewById(R.id.trip_start_date);
-        mStartDateBtn.setText(getCurrentDate());
+        mEndDateBtn = v.findViewById(R.id.trip_end_date);
+
+        // check whether the begin date and/or end date is picked
+        if(savedInstanceState != null)
+        {
+            if(!savedInstanceState.getString(DatePickerFragment.PICK_START_DATE).isEmpty() &&
+                    !savedInstanceState.getString(DatePickerFragment.PICK_END_DATE).isEmpty() )
+            {
+                try {
+                    mStartDate = mSimpleDateFormat.parse(savedInstanceState.getString(DatePickerFragment.PICK_START_DATE));
+                    mEndDate = mSimpleDateFormat.parse(savedInstanceState.getString(DatePickerFragment.PICK_END_DATE));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                mDate = Calendar.getInstance().getTime();
+                mStartDate = mEndDate = mDate;
+            }
+        }
+        else
+        {
+            mDate = Calendar.getInstance().getTime();
+            mStartDate = mEndDate = mDate;
+        }
+
+        mStartDateBtn.setText(mSimpleDateFormat.format(mStartDate));
+        mEndDateBtn.setText(mSimpleDateFormat.format(mEndDate));
         mStartDateBtn.setOnClickListener(new View.OnClickListener() { // event handler for start pick date
             @Override
             public void onClick(View v) {
@@ -91,8 +112,6 @@ public class TripPlannerFragment extends Fragment {
             }
         });
 
-        mEndDateBtn = v.findViewById(R.id.trip_end_date);
-        mEndDateBtn.setText(getCurrentDate());
         mEndDateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,15 +177,31 @@ public class TripPlannerFragment extends Fragment {
         mSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validateInputs() != true)
-                {
-                    return;
+                try {
+                    if(validateInputs() != true)
+                    {
+                        return;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
                 Toast.makeText(TripPlannerFragment.this.getActivity(), "You are at hotel screen!", Toast.LENGTH_SHORT)
                         .show();
+                HotelList hlHotelList = HotelList.get(TripPlannerFragment.this.getContext());
+                ArrayList<Hotel> arrlHotels = hlHotelList.getHotelList();
+                for(Hotel hotel : arrlHotels)
+                {
+                    Log.i(TAG, String.valueOf(hotel.getHotelId()));
+                    Log.i(TAG, String.valueOf(hotel.getHotelImage()));
+                    Log.i(TAG, String.valueOf(hotel.getHotelDescription()));
+                }
+                Intent iHotelListFragment = new Intent(TripPlannerFragment.this.getActivity(), HotelListActivity.class);
+                startActivity(iHotelListFragment);
             }
         });
 
+        mDestination.setText("www");
+        mNumAdult.setText("12");
         return v;
     }
 
@@ -176,6 +211,13 @@ public class TripPlannerFragment extends Fragment {
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("E MMM d yyyy", Locale.getDefault());
         return df.format(c);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(DatePickerFragment.PICK_START_DATE, mStartDateBtn.getText().toString());
+        outState.putString(DatePickerFragment.PICK_END_DATE, mEndDateBtn.getText().toString());
     }
 
     @Override
@@ -200,6 +242,7 @@ public class TripPlannerFragment extends Fragment {
                 if(checkDate(DatePickerFragment.PICK_START_DATE_REQUEST, mEndDate, dChosenDate) == true)
                 {
                     mStartDateBtn.setText(sChosenDate);
+                    mStartDate = dChosenDate;
                 }
                 else
                 {
@@ -222,6 +265,7 @@ public class TripPlannerFragment extends Fragment {
                 if(checkDate(DatePickerFragment.PICK_END_DATE_REQUEST, mStartDate, dChosenDate) == true)
                 {
                     mEndDateBtn.setText(sChosenDate);
+                    mEndDate = dChosenDate;
                 }
                 else
                 {
@@ -330,14 +374,6 @@ public class TripPlannerFragment extends Fragment {
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public RadioGroup getHasCovid() {
-        return mHasCovid;
-    }
-
-    public void setHasCovid(RadioGroup hasCovid) {
-        mHasCovid = hasCovid;
-    }
-
     /*
      *	Function: hideKeyboard(View view)
      *	Description:
@@ -345,8 +381,7 @@ public class TripPlannerFragment extends Fragment {
      *	Parameter: not receive anything
      *	Return: boolean: return true if all the inputs are valid
      */
-    private boolean validateInputs()
-    {
+    private boolean validateInputs() throws ParseException {
         int iSumPeopleTrip = 0;
         int iHasCovid = mHasCovid.getCheckedRadioButtonId();
 
@@ -412,22 +447,18 @@ public class TripPlannerFragment extends Fragment {
                 {
                     mNumAdult.setError("Sorry, at least 1 adult on the trip");
                     return false;
+                } else if (checkDate(DatePickerFragment.PICK_END_DATE_REQUEST, mStartDate, mEndDate) != true)
+                {
+                    Toast.makeText(this.getActivity(), R.string.invalid_date_label, Toast.LENGTH_SHORT).show();
+                    return false;
                 }
 
 
             }
 
         }
-
         return true;
-
     }
-
-
-
-
-
-
 
 
 }

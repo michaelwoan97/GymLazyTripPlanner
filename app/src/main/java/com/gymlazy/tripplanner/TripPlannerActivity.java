@@ -1,9 +1,10 @@
 package com.gymlazy.tripplanner;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
+
+import com.gymlazy.tripplanner.Controller.SingleFragmentActivity;
 
 public class TripPlannerActivity extends SingleFragmentActivity {
 
