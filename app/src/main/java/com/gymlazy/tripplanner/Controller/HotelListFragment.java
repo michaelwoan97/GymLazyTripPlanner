@@ -2,7 +2,6 @@ package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,9 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.R;
-import com.gymlazy.tripplanner.TripPlannerFragment;
-
-import org.w3c.dom.Text;
+import com.gymlazy.tripplanner.TripPlannerActivity;
 
 import java.util.List;
 
@@ -65,8 +61,8 @@ public class HotelListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.hotel_fragment_list, menu);
-
+        inflater.inflate(R.menu.trip_planner_menu, menu);
+        menu.add(0, R.id.show_subtitle, Menu.NONE, getString(R.string.show_sub_menu_item)).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         if(mIsSubtitleVisible)
         {
             menu.findItem(R.id.show_subtitle).setTitle(R.string.hide_sub_menu_item);
@@ -85,11 +81,17 @@ public class HotelListFragment extends Fragment {
                 getActivity().invalidateOptionsMenu();
                 updateSubtitle();
                 return true;
+            case R.id.home_menu_item:
+                Intent a = new Intent(this.getContext(), TripPlannerActivity.class);
+                a.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(a);
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

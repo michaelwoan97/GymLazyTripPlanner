@@ -18,4 +18,5 @@ public class TripPlannerActivity extends SingleFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
     }
+
 }

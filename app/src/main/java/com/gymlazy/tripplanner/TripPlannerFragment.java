@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -49,7 +52,7 @@ public class TripPlannerFragment extends Fragment {
     private static final String TAG = "TripPlannerFragment";
     private static final String DATE_PICKER_TAG = "DateTripPicker";
     public static final int MAX_TRIPPER = 1000;
-
+    public static boolean mCanGoNextState;
 
 
     // create new instance
@@ -60,7 +63,9 @@ public class TripPlannerFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCanGoNextState = false;
         mSimpleDateFormat = new SimpleDateFormat("E MMM d yyyy", Locale.getDefault());
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -195,6 +200,7 @@ public class TripPlannerFragment extends Fragment {
                     Log.i(TAG, String.valueOf(hotel.getHotelImage()));
                     Log.i(TAG, String.valueOf(hotel.getHotelDescription()));
                 }
+                mCanGoNextState = true;
                 Intent iHotelListFragment = new Intent(TripPlannerFragment.this.getActivity(), HotelListActivity.class);
                 startActivity(iHotelListFragment);
             }
@@ -276,6 +282,49 @@ public class TripPlannerFragment extends Fragment {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+        }
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.trip_planner_menu, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.hotels_menu_item:
+                // check whether all input is fulfilled
+                try {
+                    boolean isAllInputValid = validateInputs();
+                    if( isAllInputValid && mCanGoNextState == false)
+                    {
+                        Toast.makeText(this.getContext(), "Please, Hit the search button for searching hotels", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                    else {
+                        // check whether the home screen got key for next screen which is Hotel screen
+                        if (mCanGoNextState) {
+                            Intent a = new Intent(this.getContext(), HotelListActivity.class);
+                            a.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            startActivity(a);
+                        }
+                        else
+                        {
+                            Toast.makeText(this.getContext(), "Please, make sure to provide information for all the required field and they must be valid ", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+                    return true;
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
     }

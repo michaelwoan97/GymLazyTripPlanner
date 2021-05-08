@@ -1,8 +1,12 @@
 package com.gymlazy.tripplanner.Controller;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -25,24 +29,27 @@ public class HotelFragment extends Fragment {
     private TextView mHotelDescription;
     private ImageButton mImageButton;
     private static final String HOTEL_ID = "hotel_id";
-    private Hotel mHotel;
     private static final String TAG = "HotelFragment";
+    private Hotel mHotel;
+    private boolean mIsFavorite;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        int iHotelID = (int) getArguments().getSerializable(HOTEL_ID);
+        mHotel = HotelList.get(this.getContext()).getHotel(iHotelID);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.hotel_fragment, container, false);
+
         mHotelImage = v.findViewById(R.id.hotel_image_detail);
         mHotelName = v.findViewById(R.id.hotel_name_detail);
         mHotelDescription = v.findViewById(R.id.hotel_description_detail);
 
-        int iHotelID = (int) getArguments().getSerializable(HOTEL_ID);
-        mHotel = HotelList.get(this.getContext()).getHotel(iHotelID);
         // check whether the hotel is existed
         if(mHotel != null)
         {
@@ -51,19 +58,34 @@ public class HotelFragment extends Fragment {
             mHotelDescription.setText(mHotel.getHotelDescription());
         }
 
-        mImageButton = v.findViewById(R.id.fav_img_btn_detail);
-        mImageButton.setSelected(mHotel.isFavorite() ? true : false);
-        mImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean bIsFavorite = !mHotel.isFavorite();
-                mHotel.setFavorite(bIsFavorite);
-                HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
-                v.setSelected(bIsFavorite ? true : false);
-            }
-        });
+        mIsFavorite = mHotel.isFavorite();
 
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.hotel_fragment_menu, menu);
+        MenuItem favBtnItem = menu.findItem(R.id.fav_btn_menu_item);
+        favBtnItem.setIcon(mIsFavorite ? R.drawable.ic_baseline_favorite_red_24 : R.drawable.ic_baseline_favorite_white_24);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.fav_btn_menu_item:
+                mIsFavorite = !mIsFavorite;
+                mHotel.setFavorite(mIsFavorite);
+                HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+                Drawable dFavIcon = getResources().getDrawable( mIsFavorite ? R.drawable.ic_baseline_favorite_red_24 : R.drawable.ic_baseline_favorite_white_24);
+                item.setIcon(dFavIcon);
+                getActivity().invalidateOptionsMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     /*
