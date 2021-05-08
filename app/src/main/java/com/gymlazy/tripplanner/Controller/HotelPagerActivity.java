@@ -3,6 +3,7 @@ package com.gymlazy.tripplanner.Controller;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,12 +24,12 @@ public class HotelPagerActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private List<Hotel> mHotelList;
     private static final String EXTRA_HOTEL_ID = "com.gymlazy.tripplaner.hotel_id";
+    private static final String TAG = "HotelPagerActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hotel_pager);
-
         int iHotelID = (int) getIntent().getSerializableExtra(EXTRA_HOTEL_ID);
         mViewPager = (ViewPager) findViewById(R.id.hotel_view_pager);
         mHotelList = HotelList.get(this).getHotelList();

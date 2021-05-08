@@ -2,12 +2,14 @@ package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,11 +35,11 @@ public class HotelListFragment extends Fragment {
     private HotelAdapter mHotelAdapter;
     private boolean mIsSubtitleVisible;
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
+    private static final String TAG = "HotelListFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if(savedInstanceState != null)
         {
             mIsSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
@@ -100,6 +102,8 @@ public class HotelListFragment extends Fragment {
         private TextView mHotelName;
         private TextView mHotelDescription;
         private ImageView mHotelImage;
+        private ImageButton mFavorite;
+        private boolean mIsFavorite;
         private Hotel mHotel;
 
         /*
@@ -115,8 +119,12 @@ public class HotelListFragment extends Fragment {
             mHotelName = itemView.findViewById(R.id.hotel_name);
             mHotelDescription = itemView.findViewById(R.id.hotel_description);
             mHotelImage = itemView.findViewById(R.id.hotel_image);
+            mFavorite = itemView.findViewById(R.id.fav_img_btn);
 
-            itemView.setOnClickListener(this);
+            mHotelName.setOnClickListener(this);
+            mHotelImage.setOnClickListener(this);
+            mHotelDescription.setOnClickListener(this);
+
         }
 
         public void bind(Hotel hHotel){
@@ -124,6 +132,17 @@ public class HotelListFragment extends Fragment {
             mHotelName.setText(mHotel.getHotelName());
             mHotelDescription.setText(mHotel.getHotelDescription());
             mHotelImage.setImageResource(mHotel.getHotelImage());
+            mIsFavorite = mHotel.isFavorite();
+            mFavorite.setSelected(mIsFavorite ? true : false);
+            mFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mIsFavorite = !mIsFavorite;
+                    mHotel.setFavorite(mIsFavorite);
+                    HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+                    v.setSelected(mIsFavorite ? true : false);
+                }
+            });
         }
 
         @Override

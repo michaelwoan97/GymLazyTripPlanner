@@ -7,6 +7,15 @@ public class Hotel {
     private String mHotelName;
     private String mHotelDescription;
     private int mHotelImage;
+    private boolean mIsFavorite;
+
+    public boolean isFavorite() {
+        return mIsFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        mIsFavorite = favorite;
+    }
 
     public String getHotelName() {
         return mHotelName;

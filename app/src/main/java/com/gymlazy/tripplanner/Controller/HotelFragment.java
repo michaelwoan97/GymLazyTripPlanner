@@ -1,9 +1,11 @@
 package com.gymlazy.tripplanner.Controller;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,8 +23,10 @@ public class HotelFragment extends Fragment {
     private ImageView mHotelImage;
     private TextView mHotelName;
     private TextView mHotelDescription;
+    private ImageButton mImageButton;
     private static final String HOTEL_ID = "hotel_id";
     private Hotel mHotel;
+    private static final String TAG = "HotelFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,7 +37,6 @@ public class HotelFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.hotel_fragment, container, false);
-
         mHotelImage = v.findViewById(R.id.hotel_image_detail);
         mHotelName = v.findViewById(R.id.hotel_name_detail);
         mHotelDescription = v.findViewById(R.id.hotel_description_detail);
@@ -47,6 +50,18 @@ public class HotelFragment extends Fragment {
             mHotelName.setText(mHotel.getHotelName() + " " + mHotel.getHotelId());
             mHotelDescription.setText(mHotel.getHotelDescription());
         }
+
+        mImageButton = v.findViewById(R.id.fav_img_btn_detail);
+        mImageButton.setSelected(mHotel.isFavorite() ? true : false);
+        mImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean bIsFavorite = !mHotel.isFavorite();
+                mHotel.setFavorite(bIsFavorite);
+                HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+                v.setSelected(bIsFavorite ? true : false);
+            }
+        });
 
         return v;
     }
