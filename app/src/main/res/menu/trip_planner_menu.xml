@@ -14,7 +14,7 @@
         android:title="Favorite"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/user_menu_item"
-        android:title="User"
+        android:id="@+id/hotel_ticket_menu_item"
+        android:title="Hotel Ticket"
         app:showAsAction="never"/>
 </menu>

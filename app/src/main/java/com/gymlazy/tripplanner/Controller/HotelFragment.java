@@ -1,5 +1,6 @@
 package com.gymlazy.tripplanner.Controller;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +30,7 @@ public class HotelFragment extends Fragment {
     private TextView mHotelName;
     private TextView mHotelDescription;
     private ImageButton mImageButton;
+    private Button mBookBtn;
     private static final String HOTEL_ID = "hotel_id";
     private static final String TAG = "HotelFragment";
     private Hotel mHotel;
@@ -59,6 +62,14 @@ public class HotelFragment extends Fragment {
         }
 
         mIsFavorite = mHotel.isFavorite();
+        mBookBtn = (Button) v.findViewById(R.id.book_btn_detail);
+        mBookBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = HotelTicketActivity.newIntent(HotelFragment.this.getContext(), mHotel.getHotelId());
+                startActivity(i);
+            }
+        });
 
         return v;
     }

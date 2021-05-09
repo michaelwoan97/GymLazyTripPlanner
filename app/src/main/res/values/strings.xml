@@ -13,6 +13,15 @@
     <string name="search_label">Search</string>
     <string name="show_sub_menu_item">SHOW SUBTITLE</string>
     <string name="hide_sub_menu_item">HIDE SUBTITLE</string>
+    <string name="hotel_name_confirm">Hotel:</string>
+
+    <string name="hotel_web_confirm">Website: %1$s</string>
+    <string name="hotel_address_confirm">Address: %1$s</string>
+    <string name="hotel_phone_confirm">Phone Number: %1$s</string>
+    <string name="trip_people_confirm">Trippers: %1$d adults AND %2$d children </string>
+    <string name="trip_date_confirm">Date: %1$s -> %2$s</string>
+    <string name="agreement_confirm">I agree with the term and condition</string>
+
 
     <string name="list_hotel_label">List hotel</string>
     <string name="invalid_date_label">Sorry, your chosen date is invalid!</string>

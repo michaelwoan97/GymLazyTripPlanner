@@ -85,6 +85,15 @@ public class HotelListFragment extends Fragment {
                 Intent a = new Intent(this.getContext(), TripPlannerActivity.class);
                 a.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(a);
+            case R.id.hotel_ticket_menu_item:
+                // check whether the key for this activity is available
+                if(HotelTicketFragment.mHasKeyActivity)
+                {
+                    Intent i = new Intent(this.getContext(), HotelTicketActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(i);
+                    return true;
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }

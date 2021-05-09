@@ -25,8 +25,12 @@ import androidx.fragment.app.FragmentManager;
 
 import com.gymlazy.tripplanner.Controller.DatePickerFragment;
 import com.gymlazy.tripplanner.Controller.HotelListActivity;
+import com.gymlazy.tripplanner.Controller.HotelPagerActivity;
+import com.gymlazy.tripplanner.Controller.HotelTicketActivity;
+import com.gymlazy.tripplanner.Controller.HotelTicketFragment;
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
+import com.gymlazy.tripplanner.Model.Trip;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -192,6 +196,17 @@ public class TripPlannerFragment extends Fragment {
                 }
                 Toast.makeText(TripPlannerFragment.this.getActivity(), "You are at hotel screen!", Toast.LENGTH_SHORT)
                         .show();
+
+                // save information about the trip
+                SimpleDateFormat df = new SimpleDateFormat("E MMM d yyyy", Locale.getDefault());
+                Trip trip = Trip.get(TripPlannerFragment.this.getContext());
+                trip.setStartDate(df.format(mStartDate));
+                trip.setEndDate(df.format(mEndDate));
+                trip.setNumAdult(Integer.valueOf(mNumAdult.getText().toString()));
+                trip.setNumChild(mNumChild.getText().toString().isEmpty() == true ? 0 : Integer.valueOf(mNumChild.getText().toString()));
+                trip.setSpokenLanguage(mLanguages.getSelectedItem().toString());
+                trip.setCovid(mHasCovid.getCheckedRadioButtonId() == R.id.covid_yes ? true : false);
+
                 HotelList hlHotelList = HotelList.get(TripPlannerFragment.this.getContext());
                 ArrayList<Hotel> arrlHotels = hlHotelList.getHotelList();
                 for(Hotel hotel : arrlHotels)
@@ -322,7 +337,15 @@ public class TripPlannerFragment extends Fragment {
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
+            case R.id.hotel_ticket_menu_item:
+                // check whether the key for this activity is available
+                if(HotelTicketFragment.mHasKeyActivity)
+                {
+                    Intent i = new Intent(this.getContext(), HotelTicketActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(i);
+                    return true;
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }

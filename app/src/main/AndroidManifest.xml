@@ -21,6 +21,7 @@
             ></activity>
         <activity android:name=".Controller.HotelPagerActivity"
             android:parentActivityName=".Controller.HotelListActivity"></activity>
+        <activity android:name=".Controller.HotelTicketActivity"></activity>
     </application>
 
 </manifest>
