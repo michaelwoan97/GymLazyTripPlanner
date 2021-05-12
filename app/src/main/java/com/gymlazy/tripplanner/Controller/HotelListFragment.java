@@ -1,6 +1,7 @@
 package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,9 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
+import com.gymlazy.tripplanner.Model.databases.HotelBaseHelper;
 import com.gymlazy.tripplanner.R;
 import com.gymlazy.tripplanner.TripPlannerActivity;
 
+import java.io.IOException;
 import java.util.List;
 
 public class HotelListFragment extends Fragment {
@@ -36,6 +39,13 @@ public class HotelListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // test database
+        try {
+            SQLiteDatabase hotelBaseHelper = new HotelBaseHelper(this.getContext()).getWritableDatabase();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if(savedInstanceState != null)
         {
             mIsSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
