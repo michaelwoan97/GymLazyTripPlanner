@@ -32,6 +32,7 @@ import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.Model.Trip;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -207,7 +208,12 @@ public class TripPlannerFragment extends Fragment {
                 trip.setSpokenLanguage(mLanguages.getSelectedItem().toString());
                 trip.setCovid(mHasCovid.getCheckedRadioButtonId() == R.id.covid_yes ? true : false);
 
-                HotelList hlHotelList = HotelList.get(TripPlannerFragment.this.getContext());
+                HotelList hlHotelList = null;
+                try {
+                    hlHotelList = HotelList.get(TripPlannerFragment.this.getContext());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 ArrayList<Hotel> arrlHotels = hlHotelList.getHotelList();
                 for(Hotel hotel : arrlHotels)
                 {

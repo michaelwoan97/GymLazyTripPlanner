@@ -18,6 +18,7 @@ import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.R;
 
+import java.io.IOException;
 import java.util.List;
 
 public class HotelPagerActivity extends AppCompatActivity {
@@ -30,9 +31,14 @@ public class HotelPagerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hotel_pager);
+
         int iHotelID = (int) getIntent().getSerializableExtra(EXTRA_HOTEL_ID);
         mViewPager = (ViewPager) findViewById(R.id.hotel_view_pager);
-        mHotelList = HotelList.get(this).getHotelList();
+        try {
+            mHotelList = HotelList.get(this).getHotelList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         FragmentManager fm = getSupportFragmentManager(); // fragment manager is involved in the conservation between ViewPager and PagerAdapter
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fm) {
             @NonNull
@@ -49,11 +55,25 @@ public class HotelPagerActivity extends AppCompatActivity {
         });
 
         // display the selected hotel not the first in the list
-        for(Hotel hotel : mHotelList)
-        {
-            if(hotel.getHotelId() == iHotelID)
-            {
-                mViewPager.setCurrentItem(iHotelID);
+//        for(Hotel hotel : mHotelList)
+//        {
+//            if(hotel.getHotelId() == iHotelID)
+//            {
+//                // minus 1 is because the array list start at 0
+//                // because the beginning of the hotel list has the id of 1
+//                // it cause the adapter to start get the hotel at 1 index
+//
+//                mViewPager.setCurrentItem(iHotelID - 1);
+//                break;
+//            }
+//        }
+
+        // this loop is much better than above because it help
+        // the adapter to start extract hotel data at first index which is 0
+        for (int i = 0; i < mHotelList.size(); i++) {
+            if (mHotelList.get(i).getHotelId() == iHotelID) {
+                // set current item also set the current position in the adapter
+                mViewPager.setCurrentItem(i);
                 break;
             }
         }

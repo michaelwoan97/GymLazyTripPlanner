@@ -25,4 +25,6 @@ public class HotelListActivity extends SingleFragmentActivity{
         }
     }
 
+
+
 }

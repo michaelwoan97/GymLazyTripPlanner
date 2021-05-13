@@ -25,6 +25,8 @@ import com.gymlazy.tripplanner.R;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+
 public class HotelFragment extends Fragment {
     private ImageView mHotelImage;
     private TextView mHotelName;
@@ -41,7 +43,11 @@ public class HotelFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         int iHotelID = (int) getArguments().getSerializable(HOTEL_ID);
-        mHotel = HotelList.get(this.getContext()).getHotel(iHotelID);
+        try {
+            mHotel = HotelList.get(this.getContext()).getHotel(iHotelID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable
@@ -88,7 +94,11 @@ public class HotelFragment extends Fragment {
             case R.id.fav_btn_menu_item:
                 mIsFavorite = !mIsFavorite;
                 mHotel.setFavorite(mIsFavorite);
-                HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+                try {
+                    HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Drawable dFavIcon = getResources().getDrawable( mIsFavorite ? R.drawable.ic_baseline_favorite_red_24 : R.drawable.ic_baseline_favorite_white_24);
                 item.setIcon(dFavIcon);
                 getActivity().invalidateOptionsMenu();

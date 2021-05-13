@@ -2,7 +2,9 @@ package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,8 +27,10 @@ import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.Model.databases.HotelBaseHelper;
 import com.gymlazy.tripplanner.R;
 import com.gymlazy.tripplanner.TripPlannerActivity;
+import com.gymlazy.tripplanner.Utils.ImageDownloader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HotelListFragment extends Fragment {
@@ -55,7 +59,10 @@ public class HotelListFragment extends Fragment {
             mIsSubtitleVisible = false;
         }
 
+
+
         setHasOptionsMenu(true);
+        new FetchHotelImage().execute();
     }
 
     @Nullable
@@ -64,7 +71,11 @@ public class HotelListFragment extends Fragment {
         View v = getLayoutInflater().inflate(R.layout.hotel_list_fragment, container, false);
         mRecyclerView = v.findViewById(R.id.hotel_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        updateUI();
+        try {
+            updateUI();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return v;
     }
 
@@ -89,7 +100,11 @@ public class HotelListFragment extends Fragment {
             case R.id.show_subtitle:
                 mIsSubtitleVisible = !mIsSubtitleVisible;
                 getActivity().invalidateOptionsMenu();
-                updateSubtitle();
+                try {
+                    updateSubtitle();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return true;
             case R.id.home_menu_item:
                 Intent a = new Intent(this.getContext(), TripPlannerActivity.class);
@@ -148,7 +163,7 @@ public class HotelListFragment extends Fragment {
 
         }
 
-        public void bind(Hotel hHotel){
+        public void bind(Hotel hHotel) throws IOException {
             mHotel = hHotel;
             mHotelName.setText(mHotel.getHotelName());
             mHotelDescription.setText(mHotel.getHotelDescription());
@@ -160,7 +175,11 @@ public class HotelListFragment extends Fragment {
                 public void onClick(View v) {
                     mIsFavorite = !mIsFavorite;
                     mHotel.setFavorite(mIsFavorite);
-                    HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+                    try {
+                        HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     v.setSelected(mIsFavorite ? true : false);
                 }
             });
@@ -193,7 +212,11 @@ public class HotelListFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull HotelViewHolder holder, int position) {
             Hotel hotel = mHotelList.get(position);
-            holder.bind(hotel);
+            try {
+                holder.bind(hotel);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
@@ -212,8 +235,7 @@ public class HotelListFragment extends Fragment {
      *	Parameter: not receive anything
      *	Return: void: Not return anything
      */
-    private void updateUI()
-    {
+    private void updateUI() throws IOException {
         // get hotel list
         HotelList hlHotelList = HotelList.get(getContext());
         List<Hotel> lHotelList = hlHotelList.getHotelList();
@@ -232,8 +254,7 @@ public class HotelListFragment extends Fragment {
      *	Parameter: not receive anything
      *	Return: void: Not return anything
      */
-    private void updateSubtitle()
-    {
+    private void updateSubtitle() throws IOException {
         List<Hotel> hotelList = HotelList.get(getActivity()).getHotelList(); // get list result of the hotel
         int totalHotels = hotelList.size(); // count
         String sHotelPlural = totalHotels != 1 ? "Hotels" : "Hotel";
@@ -245,5 +266,28 @@ public class HotelListFragment extends Fragment {
         }
         AppCompatActivity activityCompat = (AppCompatActivity) getActivity();
         activityCompat.getSupportActionBar().setSubtitle(sSubtitle);
+    }
+
+
+    private class FetchHotelImage extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                ArrayList<Hotel> hotelList = HotelList.get(getActivity()).getHotelList();
+
+                // loop through each hotel to download and save the hotel image in a file
+                int count = 1;
+                for(Hotel hotel : hotelList){
+                    ImageDownloader.downloadImgFromURL(hotel.getStringHotelImage());
+                    Log.d(TAG, "Downloaded Image " + count);
+                    count++;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
     }
 }

@@ -34,7 +34,7 @@
 
         <TextView
             android:id="@+id/hotel_web_confirm"
-            android:layout_width="wrap_content"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/hotel_web_confirm"
@@ -44,7 +44,7 @@
 
         <TextView
             android:id="@+id/hotel_address_confirm"
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/hotel_address_confirm"

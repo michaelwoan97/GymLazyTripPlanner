@@ -29,11 +29,16 @@ import com.gymlazy.tripplanner.TripPlannerFragment;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+
 public class HotelTicketFragment extends Fragment {
     private TextView mHotelName;
     private TextView mTVNumTripper;
     private TextView mTVDateTrip;
     private ImageView mHotelImage;
+    private TextView mHotelPhone;
+    private TextView mHotelWeb;
+    private TextView mHotelAddress;
     private Button mConfirmBtn;
     private CheckBox mCheckBox;
     private static final String ARG_HOTEL_ID = "hotelID";
@@ -48,7 +53,11 @@ public class HotelTicketFragment extends Fragment {
         setHasOptionsMenu(true);
         mHasKeyActivity = true;
         int iHotelID = (int) getArguments().getSerializable(ARG_HOTEL_ID);
-        mHotel = HotelList.get(this.getContext()).getHotel(iHotelID);
+        try {
+            mHotel = HotelList.get(this.getContext()).getHotel(iHotelID);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         mTrip = Trip.get(this.getContext());
 
         Log.d(TAG, mTrip.getStartDate() + "->" + mTrip.getEndDate());
@@ -97,6 +106,15 @@ public class HotelTicketFragment extends Fragment {
 
         mTVDateTrip = (TextView) v.findViewById(R.id.trip_date_confirm);
         mTVDateTrip.setText(getString(R.string.trip_date_confirm, mTrip.getStartDate(), mTrip.getEndDate()));
+
+        mHotelAddress = v.findViewById(R.id.hotel_address_confirm);
+        mHotelAddress.setText(getString(R.string.hotel_address_confirm, mHotel.getHotelAddress()));
+
+        mHotelPhone = v.findViewById(R.id.hotel_phone_confirm);
+        mHotelPhone.setText(getString(R.string.hotel_phone_confirm, mHotel.getHotelPhoneNumber()));
+
+        mHotelWeb = v.findViewById(R.id.hotel_web_confirm);
+        mHotelWeb.setText(getString(R.string.hotel_web_confirm, mHotel.getHotelWebURL()));
 
         mCheckBox = (CheckBox) v.findViewById(R.id.agreenment_confirm);
         mConfirmBtn = (Button) v.findViewById(R.id.confirm_btn);
