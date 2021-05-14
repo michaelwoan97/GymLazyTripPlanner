@@ -1,8 +1,11 @@
 package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +25,7 @@ import androidx.fragment.app.Fragment;
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.R;
+import com.gymlazy.tripplanner.Utils.ImageDownloader;
 
 import org.w3c.dom.Text;
 
@@ -62,7 +66,13 @@ public class HotelFragment extends Fragment {
         // check whether the hotel is existed
         if(mHotel != null)
         {
-            mHotelImage.setImageResource(mHotel.getHotelImage());
+            // get image file of the hotel to display
+            String root = Environment.getExternalStorageDirectory().toString(); // get external storage location
+            String sFilePath = ImageDownloader.getImageNameFromURL(mHotel.getStringHotelImage(), root);
+
+            // convert file to bitmap
+            Bitmap hotelBitmap = BitmapFactory.decodeFile(sFilePath);
+            mHotelImage.setImageBitmap(hotelBitmap);
             mHotelName.setText(mHotel.getHotelName() + " " + mHotel.getHotelId());
             mHotelDescription.setText(mHotel.getHotelDescription());
         }

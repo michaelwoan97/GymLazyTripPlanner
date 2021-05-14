@@ -2,8 +2,11 @@ package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,6 +31,7 @@ import com.gymlazy.tripplanner.Model.databases.HotelBaseHelper;
 import com.gymlazy.tripplanner.R;
 import com.gymlazy.tripplanner.TripPlannerActivity;
 import com.gymlazy.tripplanner.Utils.ImageDownloader;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +43,7 @@ public class HotelListFragment extends Fragment {
     private boolean mIsSubtitleVisible;
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private static final String TAG = "HotelListFragment";
+    private ArrayList<Hotel> mHotelArrayList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,8 +64,6 @@ public class HotelListFragment extends Fragment {
             mIsSubtitleVisible = false;
         }
 
-
-
         setHasOptionsMenu(true);
         new FetchHotelImage().execute();
     }
@@ -71,6 +74,10 @@ public class HotelListFragment extends Fragment {
         View v = getLayoutInflater().inflate(R.layout.hotel_list_fragment, container, false);
         mRecyclerView = v.findViewById(R.id.hotel_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // configures the adapter appropriately on your RecyclerView
+        setupAdapter();
+
         try {
             updateUI();
         } catch (IOException e) {
@@ -167,7 +174,15 @@ public class HotelListFragment extends Fragment {
             mHotel = hHotel;
             mHotelName.setText(mHotel.getHotelName());
             mHotelDescription.setText(mHotel.getHotelDescription());
-            mHotelImage.setImageResource(mHotel.getHotelImage());
+
+            // get image file of the hotel to display
+            String root = Environment.getExternalStorageDirectory().toString(); // get external storage location
+            String sFilePath = ImageDownloader.getImageNameFromURL(mHotel.getStringHotelImage(), root);
+
+            // convert file to bitmap
+            Bitmap hotelBitmap = BitmapFactory.decodeFile(sFilePath);
+            mHotelImage.setImageBitmap(hotelBitmap);
+
             mIsFavorite = mHotel.isFavorite();
             mFavorite.setSelected(mIsFavorite ? true : false);
             mFavorite.setOnClickListener(new View.OnClickListener() {
@@ -192,6 +207,14 @@ public class HotelListFragment extends Fragment {
             startActivity(iHotelIntent);// start activity
         }
     }
+
+    private void setupAdapter() {
+        //This confirms that the fragment has been attached to an activity, and in turn that getActivity() will not be null.
+        if (isAdded()) {
+            mRecyclerView.setAdapter(new HotelAdapter(mHotelArrayList));
+        }
+    }
+
 
     private class HotelAdapter extends RecyclerView.Adapter<HotelViewHolder> {
         private List<Hotel> mHotelList;
@@ -224,7 +247,6 @@ public class HotelListFragment extends Fragment {
         public int getItemCount() {
             return mHotelList.size();
         }
-
 
     }
 
@@ -269,13 +291,13 @@ public class HotelListFragment extends Fragment {
     }
 
 
-    private class FetchHotelImage extends AsyncTask<Void, Void, Void> {
+    private class FetchHotelImage extends AsyncTask<Void, Void, ArrayList<Hotel>> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected ArrayList<Hotel> doInBackground(Void... voids) {
+            ArrayList<Hotel> hotelList = null;
             try {
-                ArrayList<Hotel> hotelList = HotelList.get(getActivity()).getHotelList();
-
+                hotelList = HotelList.get(getActivity()).getHotelList();
                 // loop through each hotel to download and save the hotel image in a file
                 int count = 1;
                 for(Hotel hotel : hotelList){
@@ -287,7 +309,17 @@ public class HotelListFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            return null;
+            return hotelList;
+        }
+
+        /**
+         * the purpose of this function is after downloading image into file update the main UI
+         * @param hotels
+         */
+        @Override
+        protected void onPostExecute(ArrayList<Hotel> hotels) {
+            mHotelArrayList = hotels;
+            setupAdapter();
         }
     }
 }
