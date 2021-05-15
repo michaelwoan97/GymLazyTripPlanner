@@ -80,4 +80,5 @@ public class ImageDownloader {
         String sFileName = imgURL.substring(iLastIndexOfDelim);
         return root + "/" + sFileName;
     }
+
 }

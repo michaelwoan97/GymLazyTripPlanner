@@ -1,5 +1,6 @@
 package com.gymlazy.tripplanner.Controller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gymlazy.tripplanner.Controller.HotelListFragment.FetchHotelDB.downloadImgCallback;
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.Model.databases.HotelBaseHelper;
@@ -65,7 +67,16 @@ public class HotelListFragment extends Fragment {
         }
 
         setHasOptionsMenu(true);
-        new FetchHotelImage().execute();
+
+        // declare the interface callback in the constructor
+        new FetchHotelDB(new downloadImgCallback() {
+            @Override
+            public void downloadImgFromDB() {
+                // invoke another asyncTask
+                new FetchHotelImage().execute();
+            }
+        }).execute(this.getContext());
+
     }
 
     @Nullable
@@ -139,6 +150,7 @@ public class HotelListFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mIsSubtitleVisible);
     }
+
 
     // view holder
     private class HotelViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -290,6 +302,39 @@ public class HotelListFragment extends Fragment {
         activityCompat.getSupportActionBar().setSubtitle(sSubtitle);
     }
 
+    public static class FetchHotelDB extends AsyncTask<Context, Void, Void> {
+
+        //  attach to activities that implement its interface.
+        // Once attached, it could use methods in its hosting activities
+        private downloadImgCallback mDownloadImgCallback;
+        public FetchHotelDB(downloadImgCallback downloadImgCallback) {
+            mDownloadImgCallback = downloadImgCallback; // reference who is its parents
+        }
+
+        @Override
+        protected Void doInBackground(Context... contexts) {
+            try {
+                HotelList.get(contexts[0]).getHotelList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            // chain another asyncTask by using callback interface delegate the work to the parent
+            mDownloadImgCallback.downloadImgFromDB();
+        }
+
+        /**
+         * the purpose of this interface is to delegate the work that involves in downloading image from
+         * database to its parent
+         */
+        public interface downloadImgCallback{ // Interface can not be instantiated that is why it is static
+            void downloadImgFromDB();
+        }
+    }
 
     private class FetchHotelImage extends AsyncTask<Void, Void, ArrayList<Hotel>> {
 

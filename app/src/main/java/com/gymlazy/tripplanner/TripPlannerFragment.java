@@ -208,19 +208,6 @@ public class TripPlannerFragment extends Fragment {
                 trip.setSpokenLanguage(mLanguages.getSelectedItem().toString());
                 trip.setCovid(mHasCovid.getCheckedRadioButtonId() == R.id.covid_yes ? true : false);
 
-                HotelList hlHotelList = null;
-                try {
-                    hlHotelList = HotelList.get(TripPlannerFragment.this.getContext());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                ArrayList<Hotel> arrlHotels = hlHotelList.getHotelList();
-                for(Hotel hotel : arrlHotels)
-                {
-                    Log.i(TAG, String.valueOf(hotel.getHotelId()));
-                    Log.i(TAG, String.valueOf(hotel.getHotelImage()));
-                    Log.i(TAG, String.valueOf(hotel.getHotelDescription()));
-                }
                 mCanGoNextState = true;
                 Intent iHotelListFragment = new Intent(TripPlannerFragment.this.getActivity(), HotelListActivity.class);
                 startActivity(iHotelListFragment);
