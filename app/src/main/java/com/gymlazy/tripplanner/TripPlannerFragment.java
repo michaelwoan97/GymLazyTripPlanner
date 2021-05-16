@@ -3,6 +3,8 @@ package com.gymlazy.tripplanner;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.gymlazy.tripplanner.Controller.DatePickerFragment;
 import com.gymlazy.tripplanner.Controller.HotelListActivity;
 import com.gymlazy.tripplanner.Controller.HotelPagerActivity;
@@ -31,6 +35,8 @@ import com.gymlazy.tripplanner.Controller.HotelTicketFragment;
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.Model.Trip;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -41,11 +47,16 @@ import java.util.Date;
 import java.util.Locale;
 
 public class TripPlannerFragment extends Fragment {
-    private Button mStartDateBtn;
-    private Button mEndDateBtn;
+    private EditText mStartDateBtn;
+    private TextInputLayout mStartDateLayout;
+    private EditText mEndDateBtn;
+    private TextInputLayout mEndDateLayout;
     private EditText mNumAdult;
+    private TextInputLayout mNumAdultLayout;
     private EditText mNumChild;
+    private TextInputLayout mNumChildLayout;
     private EditText mDestination;
+    private TextInputLayout mDestinationLayout;
     private Spinner mLanguages;
     private RadioGroup mHasCovid;
     private Button mSearchBtn;
@@ -78,8 +89,16 @@ public class TripPlannerFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = getLayoutInflater().inflate(R.layout.trip_planner_fragment,container,false);
 
+        mDestination = v.findViewById(R.id.trip_destination);
+        mDestinationLayout = v.findViewById(R.id.trip_destination_input);
+        mNumAdult = v.findViewById(R.id.num_adult);
+        mNumAdultLayout = v.findViewById(R.id.trip_num_adult_input);
+        mNumChild = v.findViewById(R.id.num_child);
+        mNumChildLayout = v.findViewById(R.id.trip_num_child_input);
+        mStartDateLayout = v.findViewById(R.id.trip_start_date_input);
         mStartDateBtn = v.findViewById(R.id.trip_start_date);
         mEndDateBtn = v.findViewById(R.id.trip_end_date);
+        mEndDateLayout = v.findViewById(R.id.trip_end_date_input);
 
         // check whether the begin date and/or end date is picked
         if(savedInstanceState != null)
@@ -106,9 +125,8 @@ public class TripPlannerFragment extends Fragment {
             mStartDate = mEndDate = mDate;
         }
 
-        mStartDateBtn.setText(mSimpleDateFormat.format(mStartDate));
-        mEndDateBtn.setText(mSimpleDateFormat.format(mEndDate));
-        mStartDateBtn.setOnClickListener(new View.OnClickListener() { // event handler for start pick date
+
+        mStartDateLayout.setEndIconOnClickListener(new View.OnClickListener() { // event handler for start pick date
             @Override
             public void onClick(View v) {
                 // get fragment manager
@@ -122,7 +140,109 @@ public class TripPlannerFragment extends Fragment {
             }
         });
 
-        mEndDateBtn.setOnClickListener(new View.OnClickListener() {
+        // when start date edit text is on focus, the date picker icon is visible
+        mStartDateBtn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    mStartDateLayout.setEndIconVisible(true);
+                    mStartDateLayout.setErrorIconDrawable(null);
+                }
+            }
+        });
+
+        // when the error appear, if the input is changed clear the error
+        mStartDateBtn.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mStartDateLayout.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        // when the error appear, if the input is changed clear the error
+        mStartDateBtn.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mStartDateLayout.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        // when the error appear, if the input is changed clear the error
+        mDestination.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mDestinationLayout.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        // when the error appear, if the input is changed clear the error
+        mNumAdult.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mNumAdultLayout.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        // when the error appear, if the input is changed clear the error
+        mNumChild.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mNumChildLayout.setError(null);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        mEndDateLayout.setEndIconOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getFragmentManager();
@@ -131,6 +251,35 @@ public class TripPlannerFragment extends Fragment {
 
                 df.setTargetFragment(TripPlannerFragment.this, DatePickerFragment.PICK_END_DATE_REQUEST);// set target fragment
                 df.show(fm,DatePickerFragment.PICK_END_DATE);
+            }
+        });
+
+        // when start date edit text is on focus, the date picker icon is visible
+        mEndDateBtn.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    mEndDateLayout.setEndIconVisible(true);
+                    mEndDateLayout.setErrorIconDrawable(null);
+                }
+            }
+        });
+
+        // when the error appear, if the input is changed clear the error
+        mEndDateBtn.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mEndDateLayout.setError(null);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -468,20 +617,31 @@ public class TripPlannerFragment extends Fragment {
             // check whether the destination is empty
             if(checkRequiredField(mDestination.getText().toString()) == false)
             {
-                mDestination.setError("Sorry, Please enter your destination!");
+                mDestinationLayout.setError("Sorry, Please enter your destination!");
+                return false;
+            }
+            if(checkRequiredField(mStartDateBtn.getText().toString()) == false)
+            {
+                mStartDateLayout.setError("Sorry, Please enter the start date of the trip!");
+                return false;
+            }
+            if(checkRequiredField(mEndDateBtn.getText().toString()) == false)
+            {
+                mEndDateLayout.setError("Sorry, Please enter the start date of the trip!");
                 return false;
             }
             else if( mNumAdult.getText().toString().isEmpty())
             {
-                mNumAdult.setError("Sorry, at least 1 adult on the trip");
+                mNumAdultLayout.setError("Sorry, at least 1 adult on the trip");
                 return false;
             }
             else
             {
+
                 try {
                     Integer.parseInt(mNumAdult.getText().toString());
                 } catch(Exception e) {
-                    mNumAdult.setError("Sorry, please enter integer number");
+                    mNumAdultLayout.setError("Sorry, please enter integer number");
                     return false;
                 }
 
@@ -490,7 +650,7 @@ public class TripPlannerFragment extends Fragment {
                     try {
                         Integer.parseInt(mNumChild.getText().toString());
                     } catch(Exception e) {
-                        mNumChild.setError("Sorry, please enter integer number");
+                        mNumChildLayout.setError("Sorry, please enter integer number");
                         return false;
                     }
 
@@ -510,7 +670,7 @@ public class TripPlannerFragment extends Fragment {
                 }
                 else if(checkNumberTripper(iSumPeopleTrip) == false)
                 {
-                    mNumAdult.setError("Sorry, at least 1 adult on the trip");
+                    mNumAdultLayout.setError("Sorry, at least 1 adult on the trip");
                     return false;
                 } else if (checkDate(DatePickerFragment.PICK_END_DATE_REQUEST, mStartDate, mEndDate) != true)
                 {
@@ -518,10 +678,10 @@ public class TripPlannerFragment extends Fragment {
                     return false;
                 }
 
-
             }
 
         }
+
         return true;
     }
 
