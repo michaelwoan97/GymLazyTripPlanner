@@ -1,8 +1,11 @@
 package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +29,7 @@ import com.gymlazy.tripplanner.Model.Trip;
 import com.gymlazy.tripplanner.R;
 import com.gymlazy.tripplanner.TripPlannerActivity;
 import com.gymlazy.tripplanner.TripPlannerFragment;
+import com.gymlazy.tripplanner.Utils.ImageDownloader;
 
 import org.w3c.dom.Text;
 
@@ -37,7 +41,6 @@ public class HotelTicketFragment extends Fragment {
     private TextView mTVDateTrip;
     private ImageView mHotelImage;
     private TextView mHotelPhone;
-    private TextView mHotelWeb;
     private TextView mHotelAddress;
     private Button mConfirmBtn;
     private CheckBox mCheckBox;
@@ -99,7 +102,13 @@ public class HotelTicketFragment extends Fragment {
         mHotelName.setText(mHotel.getHotelName() + " " + mHotel.getHotelId());
 
         mHotelImage = (ImageView) v.findViewById(R.id.hotel_img_confirm);
-        mHotelImage.setImageResource(mHotel.getHotelImage());
+        // get image file of the hotel to display
+        String root = Environment.getExternalStorageDirectory().toString(); // get external storage location
+        String sFilePath = ImageDownloader.getImageNameFromURL(mHotel.getStringHotelImage(), root);
+
+        // convert file to bitmap
+        Bitmap hotelBitmap = BitmapFactory.decodeFile(sFilePath);
+        mHotelImage.setImageBitmap(hotelBitmap);
 
         mTVNumTripper = (TextView) v.findViewById(R.id.trip_people_confirm);
         mTVNumTripper.setText(getString(R.string.trip_people_confirm, mTrip.getNumAdult(), mTrip.getNumChild()));
@@ -112,9 +121,6 @@ public class HotelTicketFragment extends Fragment {
 
         mHotelPhone = v.findViewById(R.id.hotel_phone_confirm);
         mHotelPhone.setText(getString(R.string.hotel_phone_confirm, mHotel.getHotelPhoneNumber()));
-
-        mHotelWeb = v.findViewById(R.id.hotel_web_confirm);
-        mHotelWeb.setText(getString(R.string.hotel_web_confirm, mHotel.getHotelWebURL()));
 
         mCheckBox = (CheckBox) v.findViewById(R.id.agreenment_confirm);
         mConfirmBtn = (Button) v.findViewById(R.id.confirm_btn);

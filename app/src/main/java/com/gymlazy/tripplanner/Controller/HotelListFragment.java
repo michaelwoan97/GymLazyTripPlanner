@@ -17,7 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.gymlazy.tripplanner.Controller.HotelListFragment.FetchHotelDB.downloadImgCallback;
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
@@ -42,6 +45,7 @@ import java.util.List;
 public class HotelListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private HotelAdapter mHotelAdapter;
+    private LinearLayout mProgressIndicator;
     private boolean mIsSubtitleVisible;
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private static final String TAG = "HotelListFragment";
@@ -68,14 +72,6 @@ public class HotelListFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        // declare the interface callback in the constructor
-        new FetchHotelDB(new downloadImgCallback() {
-            @Override
-            public void downloadImgFromDB() {
-                // invoke another asyncTask
-                new FetchHotelImage().execute();
-            }
-        }).execute(this.getContext());
 
     }
 
@@ -85,9 +81,20 @@ public class HotelListFragment extends Fragment {
         View v = getLayoutInflater().inflate(R.layout.hotel_list_fragment, container, false);
         mRecyclerView = v.findViewById(R.id.hotel_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setVisibility(View.GONE);
 
+        mProgressIndicator = v.findViewById(R.id.progress_indicator);
         // configures the adapter appropriately on your RecyclerView
         setupAdapter();
+
+        // declare the interface callback in the constructor
+        new FetchHotelDB(new downloadImgCallback() {
+            @Override
+            public void downloadImgFromDB() {
+                // invoke another asyncTask
+                new FetchHotelImage().execute();
+            }
+        }).execute(this.getContext());
 
         try {
             updateUI();
@@ -311,6 +318,7 @@ public class HotelListFragment extends Fragment {
             mDownloadImgCallback = downloadImgCallback; // reference who is its parents
         }
 
+
         @Override
         protected Void doInBackground(Context... contexts) {
             try {
@@ -365,6 +373,10 @@ public class HotelListFragment extends Fragment {
         protected void onPostExecute(ArrayList<Hotel> hotels) {
             mHotelArrayList = hotels;
             setupAdapter();
+
+            // hide progress bar and display hotel data
+            mProgressIndicator.setVisibility(ViewGroup.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 }

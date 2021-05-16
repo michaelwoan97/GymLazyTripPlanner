@@ -15,7 +15,6 @@
     <string name="hide_sub_menu_item">HIDE SUBTITLE</string>
     <string name="hotel_name_confirm">Hotel:</string>
 
-    <string name="hotel_web_confirm">Website: %1$s</string>
     <string name="hotel_address_confirm">Address: %1$s</string>
     <string name="hotel_phone_confirm">Phone Number: %1$s</string>
     <string name="trip_people_confirm">Trippers: %1$d adults AND %2$d children </string>

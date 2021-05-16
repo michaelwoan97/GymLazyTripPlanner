@@ -26,21 +26,12 @@
             android:layout_width="260dp"
             android:layout_height="200dp"
             android:layout_marginTop="8dp"
-            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/hotel_name_confirm"
             app:srcCompat="@drawable/nha_trang" />
-
-        <TextView
-            android:id="@+id/hotel_web_confirm"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/hotel_web_confirm"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hotel_img_confirm" />
 
         <TextView
             android:id="@+id/hotel_address_confirm"
@@ -50,7 +41,7 @@
             android:text="@string/hotel_address_confirm"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hotel_web_confirm" />
+            app:layout_constraintTop_toBottomOf="@+id/hotel_img_confirm" />
 
         <TextView
             android:id="@+id/hotel_phone_confirm"

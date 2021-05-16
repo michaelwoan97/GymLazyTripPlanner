@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -36,6 +37,7 @@ public class HotelFragment extends Fragment {
     private TextView mHotelName;
     private TextView mHotelDescription;
     private ImageButton mImageButton;
+    private Button mVisitBtn;
     private Button mBookBtn;
     private static final String HOTEL_ID = "hotel_id";
     private static final String TAG = "HotelFragment";
@@ -78,6 +80,16 @@ public class HotelFragment extends Fragment {
         }
 
         mIsFavorite = mHotel.isFavorite();
+
+        mVisitBtn = v.findViewById(R.id.visit_website);
+        mVisitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(mHotel.getHotelWebURL()));
+                startActivity(i);
+            }
+        });
+
         mBookBtn = (Button) v.findViewById(R.id.book_btn_detail);
         mBookBtn.setOnClickListener(new View.OnClickListener() {
             @Override
