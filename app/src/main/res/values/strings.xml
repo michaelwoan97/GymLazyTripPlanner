@@ -22,6 +22,11 @@
     <string name="trip_date_confirm">Date: %1$s -> %2$s</string>
     <string name="agreement_confirm">I agree with the term and condition</string>
 
+    <string name="start_polling">Start polling</string>
+    <string name="stop_polling">Stop polling</string>
+    <string name="new_hotel_title">New Hotel For Your Trip</string>
+    <string name="new_hotel_text">%1$s just added a new hotel</string>
+
 
     <string name="list_hotel_label">List hotel</string>
     <string name="invalid_date_label">Sorry, your chosen date is invalid!</string>

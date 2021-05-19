@@ -71,8 +71,6 @@ public class HotelListFragment extends Fragment {
         }
 
         setHasOptionsMenu(true);
-
-
     }
 
     @Nullable
@@ -109,6 +107,8 @@ public class HotelListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.trip_planner_menu, menu);
         menu.add(0, R.id.show_subtitle, Menu.NONE, getString(R.string.show_sub_menu_item)).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add(0, R.id.menu_item_toggle_polling, Menu.NONE, getString(R.string.start_polling));
+
         if(mIsSubtitleVisible)
         {
             menu.findItem(R.id.show_subtitle).setTitle(R.string.hide_sub_menu_item);
@@ -116,6 +116,13 @@ public class HotelListFragment extends Fragment {
         else
         {
             menu.findItem(R.id.show_subtitle).setTitle(R.string.show_sub_menu_item);
+        }
+
+        MenuItem toggleItem = menu.findItem(R.id.menu_item_toggle_polling);
+        if (PollService.isServiceAlarmOn(getActivity())) {
+            toggleItem.setTitle(R.string.stop_polling);
+        } else {
+            toggleItem.setTitle(R.string.start_polling);
         }
     }
 
@@ -130,6 +137,11 @@ public class HotelListFragment extends Fragment {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                return true;
+            case R.id.menu_item_toggle_polling:
+                boolean shouldStartAlarm = !PollService.isServiceAlarmOn(getActivity());
+                PollService.setServiceAlarm(getActivity(), shouldStartAlarm);
+                getActivity().invalidateOptionsMenu();
                 return true;
             case R.id.home_menu_item:
                 Intent a = new Intent(this.getContext(), TripPlannerActivity.class);
@@ -373,6 +385,9 @@ public class HotelListFragment extends Fragment {
         protected void onPostExecute(ArrayList<Hotel> hotels) {
             mHotelArrayList = hotels;
             setupAdapter();
+
+            // save the first result of hotel data
+            QueryPreferences.setPrefLastHotelId(getContext(),mHotelArrayList.get(0).getHotelId());
 
             // hide progress bar and display hotel data
             mProgressIndicator.setVisibility(ViewGroup.GONE);

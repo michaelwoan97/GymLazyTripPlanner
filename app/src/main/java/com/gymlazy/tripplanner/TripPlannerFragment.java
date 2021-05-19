@@ -32,6 +32,7 @@ import com.gymlazy.tripplanner.Controller.HotelListActivity;
 import com.gymlazy.tripplanner.Controller.HotelPagerActivity;
 import com.gymlazy.tripplanner.Controller.HotelTicketActivity;
 import com.gymlazy.tripplanner.Controller.HotelTicketFragment;
+import com.gymlazy.tripplanner.Controller.QueryPreferences;
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.Model.Trip;
@@ -356,6 +357,9 @@ public class TripPlannerFragment extends Fragment {
                 trip.setNumChild(mNumChild.getText().toString().isEmpty() == true ? 0 : Integer.valueOf(mNumChild.getText().toString()));
                 trip.setSpokenLanguage(mLanguages.getSelectedItem().toString());
                 trip.setCovid(mHasCovid.getCheckedRadioButtonId() == R.id.covid_yes ? true : false);
+
+                // save the query
+                QueryPreferences.setStoredQuery(TripPlannerFragment.this.getContext(),mDestination.getText().toString());
 
                 mCanGoNextState = true;
                 Intent iHotelListFragment = new Intent(TripPlannerFragment.this.getActivity(), HotelListActivity.class);

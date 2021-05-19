@@ -1,5 +1,7 @@
 package com.gymlazy.tripplanner.Controller;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.fragment.app.Fragment;
@@ -9,6 +11,10 @@ import com.gymlazy.tripplanner.TripPlannerFragment;
 
 public class HotelListActivity extends SingleFragmentActivity{
     private static final String TAG = "HotelListActivity";
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, HotelListActivity.class);
+    }
 
     @Override
     protected Fragment createFragment() {
