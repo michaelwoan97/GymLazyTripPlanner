@@ -42,7 +42,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HotelListFragment extends Fragment {
+public class HotelListFragment extends VisibleFragment {
     private RecyclerView mRecyclerView;
     private HotelAdapter mHotelAdapter;
     private LinearLayout mProgressIndicator;

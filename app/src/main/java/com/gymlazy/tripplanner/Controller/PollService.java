@@ -1,5 +1,6 @@
 package com.gymlazy.tripplanner.Controller;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.Notification;
@@ -28,6 +29,15 @@ public class PollService extends IntentService {
 
     // Set interval to 1 minute
     private static final long POLL_INTERVAL_MS = TimeUnit.MINUTES.toMillis(15);
+
+    public static final String ACTION_SHOW_NOTIFICATION =
+            "com.gymlazy.tripplanner.SHOW_NOTIFICATION";
+
+    public static final String PERM_PRIVATE =
+            "com.gymlazy.tripplanner.PRIVATE";
+    public static final String REQUEST_CODE = "REQUEST_CODE";
+    public static final String NOTIFICATION = "NOTIFICATION";
+
 
     public static Intent newIntent(Context packageContext){
         return new Intent(packageContext, PollService.class);
@@ -72,7 +82,6 @@ public class PollService extends IntentService {
                 QueryPreferences.setPrefLastHotelId(this, iRandomID);
 
                 // notification
-
                 Resources resources = getResources(); // get recourse
                 Intent i = HotelListActivity.newIntent(this); // intent to fire
                 PendingIntent pi = PendingIntent.getActivity(this, 0, i, 0); // the pending intent
@@ -86,8 +95,7 @@ public class PollService extends IntentService {
                         .setAutoCancel(true)
                         .build();
 
-                NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-                notificationManagerCompat.notify(0, notification);
+                showBackgroundNotification(0, notification);
 
             }
 
@@ -95,7 +103,6 @@ public class PollService extends IntentService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
     }
 
@@ -136,6 +143,8 @@ public class PollService extends IntentService {
             alarmManager.cancel(pi);
             pi.cancel();
         }
+
+        QueryPreferences.setAlarmOn(packageContext, isOn);
     }
 
     /**
@@ -148,5 +157,13 @@ public class PollService extends IntentService {
         PendingIntent pi = PendingIntent
                 .getService(packageContext, 0, i, PendingIntent.FLAG_NO_CREATE);
         return pi != null;
+    }
+
+    private void showBackgroundNotification(int requestCode, Notification notification){
+        Intent i = new Intent(ACTION_SHOW_NOTIFICATION);
+        i.putExtra(REQUEST_CODE, requestCode);
+        i.putExtra(NOTIFICATION, notification);
+        sendOrderedBroadcast(i, PERM_PRIVATE, null, null,
+                Activity.RESULT_OK, null, null);
     }
 }

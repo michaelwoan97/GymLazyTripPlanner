@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 public class QueryPreferences {
     private static final String PREF_SEARCH_QUERY = "searchQuery";
     private static final String PREF_LAST_HOTEL_ID = "lastHotelID";
+    private static final String PREF_IS_ALARM_ON = "isAlarmOn";
 
     /**
      * get the last query from the search destination
@@ -52,5 +53,15 @@ public class QueryPreferences {
                 .apply();
     }
 
+    public static boolean isAlarmOn(Context packageContext){
+        return PreferenceManager.getDefaultSharedPreferences(packageContext)
+                .getBoolean(PREF_IS_ALARM_ON, false);
+    }
 
+    public static void setAlarmOn(Context packgeContext, boolean isOn){
+        PreferenceManager.getDefaultSharedPreferences(packgeContext)
+                .edit()
+                .putBoolean(PREF_IS_ALARM_ON, isOn)
+                .apply();
+    }
 }
