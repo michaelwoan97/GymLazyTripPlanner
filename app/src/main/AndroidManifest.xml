@@ -49,6 +49,12 @@
                 <action android:name="com.gymlazy.tripplanner.SHOW_NOTIFICATION"/>
             </intent-filter>
         </receiver>
+
+        <provider
+            android:authorities="com.gymlazy.tripplanner.tripHotels"
+            android:name=".Controller.HotelsProvider"
+            android:exported="true"
+            android:enabled="true"/>
     </application>
 
 </manifest>

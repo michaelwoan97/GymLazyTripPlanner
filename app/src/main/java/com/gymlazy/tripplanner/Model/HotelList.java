@@ -38,33 +38,37 @@ public class HotelList {
     private HotelList(Context context) throws IOException {
         mContext = context.getApplicationContext(); // for later of using database
         mHotelDatabase = new HotelBaseHelper(mContext).getWritableDatabase();
-
-//        mHotelList = new ArrayList<>();
-//        for(int i = 0; i < 5; i++)
-//        {
-//            Hotel hotel = new Hotel();
-//            hotel.setHotelId(i);
-//            hotel.setHotelName("Nha Trang");
-//            hotel.setHotelDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum");
-//            hotel.setHotelImage(R.drawable.nha_trang);
-//            hotel.setFavorite(false);
-//            mHotelList.add(hotel);
-//        }
     }
 
     // get hotel list from database
     public ArrayList<Hotel> getHotelList()
     {
-//        if(!mHotelList.isEmpty())
-//        {
-//            return mHotelList;
-//        }
-//        return null;
-
         ArrayList<Hotel> hotels = new ArrayList<Hotel>();
 
         // select everthing from the table and wrap it with CursorWrapper
         HotelCursorWrapper hotelCursorWrapper = new HotelCursorWrapper(queryHotels(null, null));
+
+        try {
+            hotelCursorWrapper.moveToFirst();
+            while(!hotelCursorWrapper.isAfterLast()){
+                hotels.add(hotelCursorWrapper.getHotel());
+                hotelCursorWrapper.moveToNext();
+            }
+        } finally {
+            hotelCursorWrapper.close();
+        }
+
+        return hotels;
+    }
+
+    /**
+     * retrieve hotel list
+     * @param hotelCursorWrapper
+     * @return
+     */
+    public ArrayList<Hotel> getHotelList(HotelCursorWrapper hotelCursorWrapper)
+    {
+        ArrayList<Hotel> hotels = new ArrayList<Hotel>();
 
         try {
             hotelCursorWrapper.moveToFirst();
@@ -95,6 +99,28 @@ public class HotelList {
         return new HotelCursorWrapper(cursor);
     }
 
+    // get hotel data's table from the database and return a cursor which is wrapped around
+    // return cursor for usage of content providerg
+    /**
+     * query hotel return cursor for the content provider
+     * @param whereClause
+     * @param whereArgs
+     * @return
+     */
+    public Cursor queryHotelsCursor(String whereClause, String[] whereArgs){
+        Cursor cursor = mHotelDatabase.query(
+                hotelTable.NAME,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
+        cursor.moveToFirst();
+        return cursor;
+    }
+
     // get a specific hotel id from the database
     public Hotel getHotel(int iHotelID){
         HotelCursorWrapper hotelCursor = new HotelCursorWrapper(queryHotels(
@@ -113,16 +139,6 @@ public class HotelList {
         } finally {
             hotelCursor.close();
         }
-//        if(!mHotelList.isEmpty())
-//        {
-//            for(Hotel hotel : mHotelList)
-//            {
-//                if(hotel.getHotelId() == iHotelID)
-//                {
-//                    return hotel;
-//                }
-//            }
-//        }
 
     }
 
@@ -134,15 +150,6 @@ public class HotelList {
      *	Return: not return anything
      */
     public void updateFavoriteHotel(Hotel hotel){
-//        for(Hotel h : mHotelList)
-//        {
-//            if(hotel.getHotelId() == h.getHotelId())
-//            {
-//                h.setFavorite(hotel.isFavorite());
-//                Log.i(TAG, "Update successful! " + h.getHotelName() + " " + h.getHotelId() + "- " + ( h.isFavorite() ? "is favorite" : "is not favorite!"));
-//                break;
-//            }
-//        }
         ContentValues cvHotel = null;
         HotelCursorWrapper hotelCursorWrapper = new HotelCursorWrapper(queryHotels(
                 Cols.ID + " = ?",
@@ -170,11 +177,28 @@ public class HotelList {
     }
 
     /**
+     * update favorite hotel for content provider
+     * @param hotelContentValue
+     * @param selection
+     * @return
+     */
+    public int updateFavoriteHotel(ContentValues hotelContentValue, String selection){
+        int result = mHotelDatabase.update(
+                hotelTable.NAME,
+                hotelContentValue,
+                selection,
+                null
+        );
+
+        return result;
+    }
+
+    /**
      * create content-value pair object
      * @param hotel
      * @return the hotel as content-value pair
      */
-    public ContentValues getContentValues(Hotel hotel){
+    public static ContentValues getContentValues(Hotel hotel){
         ContentValues hotelContentValue = new ContentValues();
         hotelContentValue.put(Cols.ID, hotel.getHotelId());
         hotelContentValue.put(Cols.NAME, hotel.getHotelName());

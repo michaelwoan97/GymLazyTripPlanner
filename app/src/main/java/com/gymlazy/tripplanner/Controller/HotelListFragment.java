@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,6 +34,7 @@ import com.gymlazy.tripplanner.Controller.HotelListFragment.FetchHotelDB.downloa
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
 import com.gymlazy.tripplanner.Model.databases.HotelBaseHelper;
+import com.gymlazy.tripplanner.Model.databases.HotelCursorWrapper;
 import com.gymlazy.tripplanner.R;
 import com.gymlazy.tripplanner.TripPlannerActivity;
 import com.gymlazy.tripplanner.Utils.ImageDownloader;
@@ -221,11 +223,27 @@ public class HotelListFragment extends VisibleFragment {
                 public void onClick(View v) {
                     mIsFavorite = !mIsFavorite;
                     mHotel.setFavorite(mIsFavorite);
-                    try {
-                        HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                    // proof of concept to use content provider to update data
+                    Uri hotelUri = Uri.parse("content://" + HotelsProvider.AUTHORITY + "/" + HotelsProvider.BASE_PATH);
+                    int result = getContext().getContentResolver().update(hotelUri, HotelList.getContentValues(mHotel), "id = " + mHotel.getHotelId(), null);
+
+                    // check whether update successfully
+                    if(result == 0)
+                    {
+                        Toast.makeText(getContext(), "Sorry update is not successful!", Toast.LENGTH_SHORT)
+                                .show();
                     }
+
+                    //try {
+//                        // use singleton to update hotel favorite
+////                        HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+//
+
+//
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
                     v.setSelected(mIsFavorite ? true : false);
                 }
             });
@@ -362,7 +380,14 @@ public class HotelListFragment extends VisibleFragment {
         protected ArrayList<Hotel> doInBackground(Void... voids) {
             ArrayList<Hotel> hotelList = null;
             try {
-                hotelList = HotelList.get(getActivity()).getHotelList();
+                // using singleton to get data
+//                hotelList = HotelList.get(getActivity()).getHotelList();
+
+                // proof of concept using content provider to retrieve hotel data
+                Uri hotelUri = Uri.parse("content://" + HotelsProvider.AUTHORITY + "/" + HotelsProvider.BASE_PATH);
+                HotelCursorWrapper hotelCursorWrapper = new HotelCursorWrapper(getContext().getContentResolver().query(hotelUri, null, null,null, null));
+                hotelList = HotelList.get(getContext()).getHotelList(hotelCursorWrapper); // singleton process hotel data
+
                 // loop through each hotel to download and save the hotel image in a file
                 int count = 1;
                 for(Hotel hotel : hotelList){

@@ -1,6 +1,7 @@
 package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +27,7 @@ import androidx.fragment.app.Fragment;
 
 import com.gymlazy.tripplanner.Model.Hotel;
 import com.gymlazy.tripplanner.Model.HotelList;
+import com.gymlazy.tripplanner.Model.databases.HotelCursorWrapper;
 import com.gymlazy.tripplanner.R;
 import com.gymlazy.tripplanner.Utils.ImageDownloader;
 
@@ -49,11 +52,25 @@ public class HotelFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         int iHotelID = (int) getArguments().getSerializable(HOTEL_ID);
-        try {
-            mHotel = HotelList.get(this.getContext()).getHotel(iHotelID);
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        // proof of concept to use content provider to update data
+        Uri hotelUri = Uri.parse("content://" + HotelsProvider.AUTHORITY + "/" + HotelsProvider.BASE_PATH);
+        Cursor cursor = getContext().getContentResolver().query(hotelUri,null, "id = " + iHotelID, null, null);
+
+        // check whether update successfully
+        if(cursor.getCount() == 0)
+        {
+            Toast.makeText(getContext(), "Sorry can not retrieve the selected hotel!", Toast.LENGTH_SHORT)
+                    .show();
         }
+        mHotel = new HotelCursorWrapper(cursor).getHotel();
+
+        // use singleton to retrieve hotel data from database
+//        try {
+//            mHotel = HotelList.get(this.getContext()).getHotel(iHotelID);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Nullable
@@ -116,11 +133,24 @@ public class HotelFragment extends Fragment {
             case R.id.fav_btn_menu_item:
                 mIsFavorite = !mIsFavorite;
                 mHotel.setFavorite(mIsFavorite);
-                try {
-                    HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                // proof of concept to use content provider to update data
+                Uri hotelUri = Uri.parse("content://" + HotelsProvider.AUTHORITY + "/" + HotelsProvider.BASE_PATH);
+                int result = getContext().getContentResolver().update(hotelUri, HotelList.getContentValues(mHotel), "id = " + mHotel.getHotelId(), null);
+
+                // check whether update successfully
+                if(result == 0)
+                {
+                    Toast.makeText(getContext(), "Sorry update is not successful!", Toast.LENGTH_SHORT)
+                            .show();
                 }
+
+                //use singleton to update hotel data in database
+//                try {
+//                    HotelList.get(getActivity()).updateFavoriteHotel(mHotel);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 Drawable dFavIcon = getResources().getDrawable( mIsFavorite ? R.drawable.ic_baseline_favorite_red_24 : R.drawable.ic_baseline_favorite_white_24);
                 item.setIcon(dFavIcon);
                 getActivity().invalidateOptionsMenu();
