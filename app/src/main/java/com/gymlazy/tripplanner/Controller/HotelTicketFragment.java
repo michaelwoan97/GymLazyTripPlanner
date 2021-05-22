@@ -1,11 +1,13 @@
 package com.gymlazy.tripplanner.Controller;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +36,9 @@ import com.gymlazy.tripplanner.Utils.ImageDownloader;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class HotelTicketFragment extends Fragment {
     private TextView mHotelName;
@@ -46,7 +51,9 @@ public class HotelTicketFragment extends Fragment {
     private CheckBox mCheckBox;
     private static final String ARG_HOTEL_ID = "hotelID";
     private static final String TAG = "HotelTicketFragment";
+    private static final int SET_UP_EVENTS = 0;
     public static boolean mHasKeyActivity;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E MMM d yyyy", Locale.getDefault());
     private Hotel mHotel;
     private Trip mTrip;
 
@@ -134,6 +141,40 @@ public class HotelTicketFragment extends Fragment {
                             .show();
                     return;
                 }
+
+                try {
+                    // convert simple date format to UTC milliseconds from the epoch.
+                    long lBeginDate = simpleDateFormat.parse(mTrip.getStartDate()).getTime();
+                    long lEndDate = simpleDateFormat.parse(mTrip.getEndDate()).getTime();
+
+                    // calendar content provider for establishing an event
+                    Intent i = new Intent(Intent.ACTION_INSERT)
+                            .setData(CalendarContract.Events.CONTENT_URI)
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, lBeginDate)
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, lEndDate)
+                            .putExtra(Intent.EXTRA_EMAIL, "elonmusk97@gmail.com") // guest section
+                            .putExtra(CalendarContract.Events.TITLE, mTrip.getDestination() + " Trip")
+                            .putExtra(CalendarContract.Events.DESCRIPTION, "The duration of the trip")
+                            .putExtra(CalendarContract.Events.EVENT_LOCATION, mHotel.getHotelName())
+                            .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+
+                    startActivityForResult(i, SET_UP_EVENTS);
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED)
+        {
+             //build intent
                 Intent i = new Intent(HotelTicketFragment.this.getContext(), TripPlannerActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
@@ -141,10 +182,7 @@ public class HotelTicketFragment extends Fragment {
                 mHasKeyActivity = false;
                 Toast.makeText(HotelTicketFragment.this.getContext(), "Thank you and Enjoy the Trip", Toast.LENGTH_SHORT)
                         .show();
-            }
-        });
-
-        return v;
+        }
     }
 
     public static Fragment newInstance(int iHotelID){

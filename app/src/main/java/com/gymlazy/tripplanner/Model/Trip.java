@@ -5,6 +5,7 @@ import android.content.Context;
 import java.util.Date;
 
 public class Trip {
+    private String mDestination;
     private String mStartDate;
     private String mEndDate;
     private int mNumAdult;
@@ -24,6 +25,14 @@ public class Trip {
     public Trip(Context packageContext)
     {
         // constructor
+    }
+
+    public String getDestination() {
+        return mDestination;
+    }
+
+    public void setDestination(String destination) {
+        mDestination = destination;
     }
 
     public String getStartDate() {

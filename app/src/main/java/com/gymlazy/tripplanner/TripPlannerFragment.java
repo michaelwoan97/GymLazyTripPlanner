@@ -357,6 +357,7 @@ public class TripPlannerFragment extends Fragment {
                 trip.setNumChild(mNumChild.getText().toString().isEmpty() == true ? 0 : Integer.valueOf(mNumChild.getText().toString()));
                 trip.setSpokenLanguage(mLanguages.getSelectedItem().toString());
                 trip.setCovid(mHasCovid.getCheckedRadioButtonId() == R.id.covid_yes ? true : false);
+                trip.setDestination(mDestination.getText().toString());
 
                 // save the query
                 QueryPreferences.setStoredQuery(TripPlannerFragment.this.getContext(),mDestination.getText().toString());
