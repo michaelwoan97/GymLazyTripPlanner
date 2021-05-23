@@ -5,9 +5,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +37,7 @@ import com.gymlazy.tripplanner.Utils.ImageDownloader;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.util.List;
 
 public class HotelFragment extends Fragment {
     private ImageView mHotelImage;
@@ -151,10 +155,14 @@ public class HotelFragment extends Fragment {
 //                } catch (IOException e) {
 //                    e.printStackTrace();
 //                }
+
                 Drawable dFavIcon = getResources().getDrawable( mIsFavorite ? R.drawable.ic_baseline_favorite_red_24 : R.drawable.ic_baseline_favorite_white_24);
                 item.setIcon(dFavIcon);
                 getActivity().invalidateOptionsMenu();
                 return true;
+            case R.id.location_btn_menu_item:
+                Intent i = TripMapsActivity.newIntent(getContext(), mHotel.getHotelId());
+                startActivity(i);
             default:
                 return super.onOptionsItemSelected(item);
         }

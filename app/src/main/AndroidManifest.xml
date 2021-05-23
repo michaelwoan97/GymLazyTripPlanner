@@ -2,16 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gymlazy.tripplanner">
 
-    <permission android:name="com.gymlazy.tripplanner.PRIVATE"
-        android:protectionLevel="signature"/>
-    
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
+    <permission
+        android:name="com.gymlazy.tripplanner.PRIVATE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"></uses-permission>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="com.gymlazy.tripplanner.PRIVATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.gymlazy.tripplanner.PRIVATE" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
@@ -22,6 +31,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TripPlanner">
+
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".Controller.TripMapsActivity"
+            android:label="@string/title_activity_trip_maps"></activity>
+
         <activity android:name=".TripPlannerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,34 +55,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Controller.HotelListActivity" />
+        <activity
+            android:name=".Controller.HotelPagerActivity"
+            android:parentActivityName=".Controller.HotelListActivity" />
+        <activity android:name=".Controller.HotelTicketActivity" />
 
-        <activity android:name=".Controller.HotelListActivity"
-            ></activity>
-        <activity android:name=".Controller.HotelPagerActivity"
-            android:parentActivityName=".Controller.HotelListActivity"></activity>
-        <activity android:name=".Controller.HotelTicketActivity"></activity>
-
-        <service android:name=".Controller.PollService"/>
+        <service android:name=".Controller.PollService" />
 
         <receiver android:name=".Controller.StartupReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-        </receiver>
-
-<!--        this is result receiver-->
-        <receiver android:name=".Controller.NotificationReceiver"
+        </receiver> <!-- this is result receiver -->
+        <receiver
+            android:name=".Controller.NotificationReceiver"
             android:exported="false">
             <intent-filter android:priority="-999">
-                <action android:name="com.gymlazy.tripplanner.SHOW_NOTIFICATION"/>
+                <action android:name="com.gymlazy.tripplanner.SHOW_NOTIFICATION" />
             </intent-filter>
         </receiver>
 
         <provider
-            android:authorities="com.gymlazy.tripplanner.tripHotels"
             android:name=".Controller.HotelsProvider"
-            android:exported="true"
-            android:enabled="true"/>
+            android:authorities="com.gymlazy.tripplanner.tripHotels"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

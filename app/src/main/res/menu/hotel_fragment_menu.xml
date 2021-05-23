@@ -6,4 +6,8 @@
         android:icon="@drawable/ic_baseline_favorite_white_24"
         app:showAsAction="ifRoom"
         tools:ignore="MenuTitle" />
+    <item android:id="@+id/location_btn_menu_item"
+        android:icon="@drawable/ic_baseline_location_on_24"
+        app:showAsAction="ifRoom"
+        tools:ignore="MenuTitle" />
 </menu>

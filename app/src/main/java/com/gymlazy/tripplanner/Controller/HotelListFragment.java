@@ -104,6 +104,7 @@ public class HotelListFragment extends VisibleFragment {
         return v;
     }
 
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
