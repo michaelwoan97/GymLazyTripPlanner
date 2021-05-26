@@ -1,9 +1,13 @@
 package com.gymlazy.tripplanner.Controller;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Environment;
@@ -174,6 +178,20 @@ public class HotelTicketFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED)
         {
+            int iEventID = listSelectedCalendars(mTrip.getDestination() + " Trip");
+            Log.d(TAG, "The event ID for the newly created trip is: " + iEventID);
+            mTrip.setEventCalendarID(iEventID);
+            QueryPreferences.setPrefEventId(this.getContext(), iEventID);
+
+            Intent intent = new Intent(this.getContext(), TripPlannerWidget.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+            // since it seems the onUpdate() is only fired on that:
+            int[] ids = AppWidgetManager.getInstance(getContext())
+                    .getAppWidgetIds(new ComponentName(this.getActivity(), TripPlannerWidget.class));
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+            this.getActivity().sendBroadcast(intent);
+
              //build intent
                 Intent i = new Intent(HotelTicketFragment.this.getContext(), TripPlannerActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -192,5 +210,55 @@ public class HotelTicketFragment extends Fragment {
         HotelTicketFragment hotelTicketFragment = new HotelTicketFragment();
         hotelTicketFragment.setArguments(b);
         return hotelTicketFragment;
+    }
+
+    /**
+     * to find the event ID for the trip event newly created
+     * @param eventtitle
+     * @return
+     */
+    private int listSelectedCalendars(String eventtitle) {
+
+
+        Uri eventUri;
+        if (android.os.Build.VERSION.SDK_INT <= 7) {
+            // the old way
+
+            eventUri = Uri.parse("content://calendar/events");
+        } else {
+            // the new way
+
+            eventUri = Uri.parse("content://com.android.calendar/events");
+        }
+
+        int result = 0;
+        String projection[] = { "_id", "title" };
+        Cursor cursor = getActivity().getContentResolver().query(eventUri, null, null, null,
+                null);
+
+        if (cursor.moveToFirst()) {
+
+            String calName;
+            String calID;
+
+            int nameCol = cursor.getColumnIndex(projection[1]);
+            int idCol = cursor.getColumnIndex(projection[0]);
+
+            /* loop and try to find the event Id for the newly created event for the trip
+             */
+            do {
+                calName = cursor.getString(nameCol);
+                calID = cursor.getString(idCol);
+
+                if (calName != null && calName.contains(eventtitle)) {
+                    result = Integer.parseInt(calID);
+                }
+
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return result;
+
     }
 }

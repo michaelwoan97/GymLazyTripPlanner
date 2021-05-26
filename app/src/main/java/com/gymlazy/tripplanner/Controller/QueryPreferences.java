@@ -8,6 +8,9 @@ public class QueryPreferences {
     private static final String PREF_SEARCH_QUERY = "searchQuery";
     private static final String PREF_LAST_HOTEL_ID = "lastHotelID";
     private static final String PREF_IS_ALARM_ON = "isAlarmOn";
+    private static final String PREF_EVENT_ID = "eventID";
+    private static final String PREF_START_DATE = "startDate";
+    private static final String PREF_END_DATE = "endDate";
 
     /**
      * get the last query from the search destination
@@ -64,4 +67,73 @@ public class QueryPreferences {
                 .putBoolean(PREF_IS_ALARM_ON, isOn)
                 .apply();
     }
+
+    /**
+     * get the event ID of the newly created trip
+     * @param packageContext
+     * @return
+     */
+    public static int getPrefEventID(Context packageContext){
+        return PreferenceManager.getDefaultSharedPreferences(packageContext)
+                .getInt(PREF_EVENT_ID, 0);
+    }
+
+    /**
+     * save the event ID of the newly created trip
+     * @param packageContext
+     * @param iHotelID
+     */
+    public static void setPrefEventId(Context packageContext, int iHotelID){
+        PreferenceManager.getDefaultSharedPreferences(packageContext)
+                .edit()
+                .putInt(PREF_EVENT_ID, iHotelID)
+                .apply();
+    }
+
+
+    /**
+     * get the start date of the newly created trip
+     * @param packageContext
+     * @return
+     */
+    public static String getPrefStartDate(Context packageContext){
+        return PreferenceManager.getDefaultSharedPreferences(packageContext)
+                .getString(PREF_START_DATE, null);
+    }
+
+    /**
+     * save the start date of the newly created trip
+     * @param packageContext
+     * @param sHotelStartDate
+     */
+    public static void setPrefStartDate(Context packageContext, String sHotelStartDate){
+        PreferenceManager.getDefaultSharedPreferences(packageContext)
+                .edit()
+                .putString(PREF_START_DATE, sHotelStartDate)
+                .apply();
+    }
+
+    /**
+     * get the end date of the newly created trip
+     * @param packageContext
+     * @return
+     */
+    public static String getPrefEndDate(Context packageContext){
+        return PreferenceManager.getDefaultSharedPreferences(packageContext)
+                .getString(PREF_END_DATE, null);
+    }
+
+    /**
+     * save the end date of the newly created trip
+     * @param packageContext
+     * @param sHotelEndDate
+     */
+    public static void setPrefEndDate(Context packageContext, String sHotelEndDate){
+        PreferenceManager.getDefaultSharedPreferences(packageContext)
+                .edit()
+                .putString(PREF_END_DATE, sHotelEndDate)
+                .apply();
+    }
+
+
 }

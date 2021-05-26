@@ -81,6 +81,16 @@
             android:authorities="com.gymlazy.tripplanner.tripHotels"
             android:enabled="true"
             android:exported="true" />
+
+        <receiver android:name=".Controller.TripPlannerWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/trip_planner_widget_info"/>
+        </receiver>
     </application>
 
 </manifest>

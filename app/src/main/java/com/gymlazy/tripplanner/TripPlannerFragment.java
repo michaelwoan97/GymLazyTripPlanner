@@ -361,6 +361,8 @@ public class TripPlannerFragment extends Fragment {
 
                 // save the query
                 QueryPreferences.setStoredQuery(TripPlannerFragment.this.getContext(),mDestination.getText().toString());
+                QueryPreferences.setPrefStartDate(TripPlannerFragment.this.getContext(), df.format(mStartDate));
+                QueryPreferences.setPrefEndDate(TripPlannerFragment.this.getContext(), df.format(mEndDate));
 
                 mCanGoNextState = true;
                 Intent iHotelListFragment = new Intent(TripPlannerFragment.this.getActivity(), HotelListActivity.class);

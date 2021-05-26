@@ -10,6 +10,7 @@ public class Trip {
     private String mEndDate;
     private int mNumAdult;
     private int mNumChild;
+    private int mEventCalendarID;
     private String mSpokenLanguage;
     private Boolean mIsCovid;
     private static Trip sTrip;
@@ -81,5 +82,13 @@ public class Trip {
 
     public void setCovid(Boolean covid) {
         mIsCovid = covid;
+    }
+
+    public int getEventCalendarID() {
+        return mEventCalendarID;
+    }
+
+    public void setEventCalendarID(int eventCalendarID) {
+        mEventCalendarID = eventCalendarID;
     }
 }
