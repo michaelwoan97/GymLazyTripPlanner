@@ -1,14 +1,18 @@
 package com.gymlazy.tripplanner.Controller;
 
+import android.Manifest;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.CalendarContract;
@@ -27,6 +31,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.gymlazy.tripplanner.Model.Hotel;
@@ -56,6 +61,7 @@ public class HotelTicketFragment extends Fragment {
     private static final String ARG_HOTEL_ID = "hotelID";
     private static final String TAG = "HotelTicketFragment";
     private static final int SET_UP_EVENTS = 0;
+    private static final int REQUEST_EVENT_CODE = 10;
     public static boolean mHasKeyActivity;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E MMM d yyyy", Locale.getDefault());
     private Hotel mHotel;
@@ -146,26 +152,13 @@ public class HotelTicketFragment extends Fragment {
                     return;
                 }
 
-                try {
-                    // convert simple date format to UTC milliseconds from the epoch.
-                    long lBeginDate = simpleDateFormat.parse(mTrip.getStartDate()).getTime();
-                    long lEndDate = simpleDateFormat.parse(mTrip.getEndDate()).getTime();
-
-                    // calendar content provider for establishing an event
-                    Intent i = new Intent(Intent.ACTION_INSERT)
-                            .setData(CalendarContract.Events.CONTENT_URI)
-                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, lBeginDate)
-                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, lEndDate)
-                            .putExtra(Intent.EXTRA_EMAIL, "elonmusk97@gmail.com") // guest section
-                            .putExtra(CalendarContract.Events.TITLE, mTrip.getDestination() + " Trip")
-                            .putExtra(CalendarContract.Events.DESCRIPTION, "The duration of the trip")
-                            .putExtra(CalendarContract.Events.EVENT_LOCATION, mHotel.getHotelName())
-                            .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
-
-                    startActivityForResult(i, SET_UP_EVENTS);
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                //  Permission check
+                if (!hasPermissions(HotelTicketFragment.this.getContext(), new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR})) {
+                    // Permission ask
+                    requestPermissions(new String[]{Manifest.permission.WRITE_CALENDAR, Manifest.permission.READ_CALENDAR}, REQUEST_EVENT_CODE);
+                } else {
+                    // if permission is already granted then open calendar to set up event
+                    setUpCalendarEvent();
                 }
 
             }
@@ -174,33 +167,80 @@ public class HotelTicketFragment extends Fragment {
         return v;
     }
 
+    /**
+     * open calendar to set up an event
+     */
+    private void setUpCalendarEvent() {
+        try {
+            // convert simple date format to UTC milliseconds from the epoch.
+            long lBeginDate = simpleDateFormat.parse(mTrip.getStartDate()).getTime();
+            long lEndDate = simpleDateFormat.parse(mTrip.getEndDate()).getTime();
+
+            // calendar content provider for establishing an event
+            Intent i = new Intent(Intent.ACTION_INSERT)
+                    .setData(CalendarContract.Events.CONTENT_URI)
+                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, lBeginDate)
+                    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, lEndDate)
+                    .putExtra(CalendarContract.Events.TITLE, mTrip.getDestination() + " Trip")
+                    .putExtra(CalendarContract.Events.DESCRIPTION, "The duration of the trip")
+                    .putExtra(CalendarContract.Events.EVENT_LOCATION, mHotel.getHotelName())
+                    .putExtra(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY);
+
+            startActivityForResult(i, SET_UP_EVENTS);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED)
         {
-            int iEventID = listSelectedCalendars(mTrip.getDestination() + " Trip");
-            Log.d(TAG, "The event ID for the newly created trip is: " + iEventID);
-            mTrip.setEventCalendarID(iEventID);
-            QueryPreferences.setPrefEventId(this.getContext(), iEventID);
+            saveEventID();
 
-            Intent intent = new Intent(this.getContext(), TripPlannerWidget.class);
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-            // since it seems the onUpdate() is only fired on that:
-            int[] ids = AppWidgetManager.getInstance(getContext())
-                    .getAppWidgetIds(new ComponentName(this.getActivity(), TripPlannerWidget.class));
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-            this.getActivity().sendBroadcast(intent);
+            notifyTimerAppWidget();
 
-             //build intent
-                Intent i = new Intent(HotelTicketFragment.this.getContext(), TripPlannerActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(i);
-                getActivity().finish();
-                mHasKeyActivity = false;
-                Toast.makeText(HotelTicketFragment.this.getContext(), "Thank you and Enjoy the Trip", Toast.LENGTH_SHORT)
-                        .show();
+            //build intent
+            backToDestinationActivity();
         }
+    }
+
+    /**
+     * use for noticing the app widget
+     */
+    private void notifyTimerAppWidget() {
+        Intent intent = new Intent(this.getContext(), TripPlannerWidget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+        // since it seems the onUpdate() is only fired on that:
+        int[] ids = AppWidgetManager.getInstance(getContext())
+                .getAppWidgetIds(new ComponentName(this.getActivity(), TripPlannerWidget.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        this.getActivity().sendBroadcast(intent);
+    }
+
+    /**
+     * use for saving event ID
+     */
+    private void saveEventID() {
+        int iEventID = listSelectedCalendars(mTrip.getDestination() + " Trip");
+        Log.d(TAG, "The event ID for the newly created trip is: " + iEventID);
+        mTrip.setEventCalendarID(iEventID);
+        QueryPreferences.setPrefEventId(this.getContext(), iEventID);
+    }
+
+    /**
+     * use for building intent to go back to destination activity
+     */
+    private void backToDestinationActivity() {
+        Intent i = new Intent(HotelTicketFragment.this.getContext(), TripPlannerActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(i);
+        getActivity().finish();
+        mHasKeyActivity = false;
+        Toast.makeText(HotelTicketFragment.this.getContext(), "Thank you and Enjoy the Trip", Toast.LENGTH_SHORT)
+                .show();
     }
 
     public static Fragment newInstance(int iHotelID){
@@ -259,6 +299,47 @@ public class HotelTicketFragment extends Fragment {
         }
 
         return result;
+
+    }
+
+    // Function for check permission already granted or not
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG,"Permission is denied");
+                    return false;
+                }
+            }
+        }
+        Log.d(TAG,"Permission is granted");
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+
+        if (requestCode == REQUEST_EVENT_CODE) {
+            if(grantResults.length != 0 ){
+
+                // check whether the user agree to open calendar
+                for (int result : grantResults){
+                    if(result != PackageManager.PERMISSION_GRANTED){
+                        backToDestinationActivity();
+                        return;
+                    }
+                    Log.d(TAG,"Permission " + result + " is granted");
+                }
+                // if permission is already granted then use calendar
+                setUpCalendarEvent();
+            } else {
+                //build intent
+                backToDestinationActivity();
+            }
+
+        }
 
     }
 }

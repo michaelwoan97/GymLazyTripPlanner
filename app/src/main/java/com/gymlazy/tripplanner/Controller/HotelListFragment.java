@@ -1,12 +1,15 @@
 package com.gymlazy.tripplanner.Controller;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,6 +55,7 @@ public class HotelListFragment extends VisibleFragment {
     private boolean mIsSubtitleVisible;
     private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
     private static final String TAG = "HotelListFragment";
+    private static final int REQUEST_STORAGE_CODE = 111;
     private ArrayList<Hotel> mHotelArrayList;
 
     @Override
@@ -88,13 +93,21 @@ public class HotelListFragment extends VisibleFragment {
         setupAdapter();
 
         // declare the interface callback in the constructor
-        new FetchHotelDB(new downloadImgCallback() {
-            @Override
-            public void downloadImgFromDB() {
-                // invoke another asyncTask
-                new FetchHotelImage().execute();
-            }
-        }).execute(this.getContext());
+        //  Permission check
+        if (!hasPermissions(this.getContext(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE})) {
+            // Permission ask
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_STORAGE_CODE);
+        } else {
+            // if permission is already granted than load url
+            new FetchHotelDB(new downloadImgCallback() {
+                @Override
+                public void downloadImgFromDB() {
+                    // invoke another asyncTask
+                    new FetchHotelImage().execute();
+                }
+            }).execute(this.getContext());
+        }
+
 
         try {
             updateUI();
@@ -339,6 +352,53 @@ public class HotelListFragment extends VisibleFragment {
         AppCompatActivity activityCompat = (AppCompatActivity) getActivity();
         activityCompat.getSupportActionBar().setSubtitle(sSubtitle);
     }
+
+    // Function for check permission already granted or not
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG,"Permission is denied");
+                    return false;
+                }
+            }
+        }
+        Log.d(TAG,"Permission is granted");
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_STORAGE_CODE) {
+            if(grantResults.length != 0 ){
+                for (int result : grantResults){
+                    if(result != PackageManager.PERMISSION_GRANTED){
+                        // if permission is not granted then only fetch hotel databse
+                        new FetchHotelDB(new downloadImgCallback() {
+                            @Override
+                            public void downloadImgFromDB() {
+                                return;
+                            }
+                        }).execute(this.getContext());
+                        return;
+                    }
+                    Log.d(TAG,"Permission " + result + " is granted");
+                }
+                // if permission is already granted then fetch hotel db and images
+                new FetchHotelDB(new downloadImgCallback() {
+                    @Override
+                    public void downloadImgFromDB() {
+                        // invoke another asyncTask
+                        new FetchHotelImage().execute();
+                    }
+                }).execute(this.getContext());
+            }
+        }
+
+    }
+
 
     public static class FetchHotelDB extends AsyncTask<Context, Void, Void> {
 

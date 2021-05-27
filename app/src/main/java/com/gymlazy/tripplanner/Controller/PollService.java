@@ -28,7 +28,7 @@ public class PollService extends IntentService {
     private static final String TAG = "PollService";
 
     // Set interval to 1 minute
-    private static final long POLL_INTERVAL_MS = TimeUnit.MINUTES.toMillis(15);
+    private static final long POLL_INTERVAL_MS = TimeUnit.SECONDS.toMillis(3);
 
     public static final String ACTION_SHOW_NOTIFICATION =
             "com.gymlazy.tripplanner.SHOW_NOTIFICATION";
