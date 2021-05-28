@@ -3,14 +3,18 @@ This is the Android app that was built for the purpose of planning a trip. Durin
 
 Screenshots of the app:
 
-<div float="left" style="text-align:center;">
-    <img src="./trip_planner_screen.png" width="350"/>
-    <img src="./hotel_list_screen.png" width="350"/>
+<div float="left" >
+    <center>
+            <img src="./trip_planner_screen.png" width="350"/>
+            <img src="./hotel_list_screen.png" width="350"/>
+        </center>
 </div>
 
 <div float="left" style="text-align:center;">
- <img src="./hotel_screen.png" width="350"/>
-  <img src="./map_screen.png" width="350"/>
+    <center>
+         <img src="./hotel_screen.png" width="350"/>
+          <img src="./map_screen.png" width="350"/>
+          </center>
 </div>
 
 
