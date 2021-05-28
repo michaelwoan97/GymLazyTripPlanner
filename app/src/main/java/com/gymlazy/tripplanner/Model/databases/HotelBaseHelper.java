@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelBaseHelper.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelBaseHelper class used for any operations in regarding to the database
+*/
+
 package com.gymlazy.tripplanner.Model.databases;
 
 import android.content.Context;

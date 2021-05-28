@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelList.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelList class which is a singleton and it is used for any operations in regarding to the hotel list information
+*/
+
 package com.gymlazy.tripplanner.Model;
 
 import android.content.ContentValues;

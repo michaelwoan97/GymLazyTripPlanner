@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelTicketFragment.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelTicketFragment class used for confirm whether the hotel is going to be booked
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.Manifest;

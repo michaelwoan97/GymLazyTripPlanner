@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelCursorWrapper.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelCursorWrapper class which is a wrapper around a cursor
+*/
+
 package com.gymlazy.tripplanner.Model.databases;
 
 import android.database.Cursor;

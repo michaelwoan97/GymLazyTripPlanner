@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: ImageDownloader.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the ImageDownloader class which is a util class used for downloading the images from the URLs
+*/
+
 package com.gymlazy.tripplanner.Utils;
 
 import android.graphics.Bitmap;

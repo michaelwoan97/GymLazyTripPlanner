@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelListFragment.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelListFragment class used for displaying the list of hotel based on the destination
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.Manifest;

@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: StartupReceiver.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the StartupReceiver class used for receiving the broadcast when the device is booted
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.content.BroadcastReceiver;

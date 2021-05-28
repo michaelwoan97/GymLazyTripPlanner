@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: DatePickerFragment.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the DatePickerFragment class for creating date picker fragment
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.app.Activity;
@@ -21,10 +30,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-
-// how to create dialog
-// communicate which fragment to be sent
-// update approriate fragment
 
 // create date picker fragment
 // Credit: codinginflow

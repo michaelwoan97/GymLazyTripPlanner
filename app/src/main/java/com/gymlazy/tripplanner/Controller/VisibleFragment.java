@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: VisibleFragment.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the VisibleFragment class which is a generic fragment that hides foreground notifications
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.app.Activity;

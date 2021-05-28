@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelFragment.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelFragment class for displaying the detail about a hotel
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.content.Intent;

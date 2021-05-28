@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: PollService.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the PollService class used for creating a service for checking whether a new hotel has been added to the database
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.app.Activity;

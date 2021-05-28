@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelTicketActivity.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelTicketActivity class used for hosting HotelTicketFragment
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.content.Context;

@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: TripMapsActivity.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the TripMapsActivity class used for creating a map to the destination of a hotel
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import androidx.appcompat.app.AppCompatActivity;

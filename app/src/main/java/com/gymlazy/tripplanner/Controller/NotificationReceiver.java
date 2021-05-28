@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: NotificationReceiver.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the NotificationReceiver class used for creating notification about a new hotel recently been added to the database
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.app.Activity;

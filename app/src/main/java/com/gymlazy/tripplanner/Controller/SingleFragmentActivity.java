@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: SingleFragmentActivity.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the SingleFragmentActivity class which is the base class for almost of the classes in the Trip Planner application
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.os.Bundle;

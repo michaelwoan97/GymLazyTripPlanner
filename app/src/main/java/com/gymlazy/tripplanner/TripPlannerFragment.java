@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: TripPlannerFragment.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains TripPlannerFragment class which is used for getting and saving information about the trip
+*/
+
 package com.gymlazy.tripplanner;
 
 import android.app.Activity;

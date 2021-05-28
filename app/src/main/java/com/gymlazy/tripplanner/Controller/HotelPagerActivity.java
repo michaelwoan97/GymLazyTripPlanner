@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelPagerActivity.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelPagerActivity class used for hosting HotelFragment
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.content.Context;

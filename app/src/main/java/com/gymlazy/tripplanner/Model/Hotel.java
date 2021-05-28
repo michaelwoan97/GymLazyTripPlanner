@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: Hotel.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the Hotel class which is the hotel model
+*/
+
 package com.gymlazy.tripplanner.Model;
 
 import androidx.recyclerview.widget.RecyclerView;

@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: HotelDbSchema.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the HotelDbSchema class defined the database schema in constants
+*/
+
 package com.gymlazy.tripplanner.Model.databases;
 
 public class HotelDbSchema {

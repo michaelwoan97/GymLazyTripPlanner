@@ -1,3 +1,12 @@
+/*
+*	PROJECT: Trip Planner
+*	FILE: TripPlannerWidget.java
+*	PROGRAMMER: Nghia Nguyen
+*	FIRST VERSION: 2021/05/06
+*	DESCRIPTION:
+		This file contains the TripPlannerWidget class used for creating a countdown timer widget for the Trip Planner application
+*/
+
 package com.gymlazy.tripplanner.Controller;
 
 import android.app.PendingIntent;
